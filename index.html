@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Dino Clicker 🦖 - Ultimate Upgrades + Leaderboard</title>
+<title>Dino Clicker 🦖 - Online Leaderboard</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,16 +17,6 @@
   h1 {
     font-size: 48px;
     margin-bottom: 0;
-  }
-  #dino {
-    width: 180px;
-    cursor: pointer;
-    margin: 20px auto;
-    transition: transform 0.1s ease;
-    user-select: none;
-  }
-  #dino:active {
-    transform: scale(0.9);
   }
   #score, #highscore {
     font-size: 32px;
@@ -56,10 +46,6 @@
   .upgrade-item {
     margin-bottom: 15px;
   }
-  .upgrade-cost {
-    font-weight: bold;
-    color: #155724;
-  }
   #leaderboard {
     margin-top: 40px;
     text-align: left;
@@ -77,12 +63,15 @@
     border: 1px solid #ccc;
     margin-right: 10px;
   }
+  #submitMessage {
+    margin-top: 10px;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
 
 <h1>Dino Clicker 🦖</h1>
-<img id="dino" src="https://raw.githubusercontent.com/GreenIce99/Dino-Clicker/main/dino.png" alt="Dino" draggable="false" />
 <div id="score">Score: 0</div>
 <div id="highscore">Personal Highscore: 0</div>
 
@@ -105,20 +94,20 @@
   <ol id="leaderboardList"></ol>
   <input type="text" id="nameInput" placeholder="Enter your name" maxlength="12" />
   <button class="button" id="submitScore">Submit Score</button>
-  <div id="submitMessage" style="color:green; margin-top:10px;"></div>
+  <div id="submitMessage"></div>
 </div>
 
 <audio id="clickSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
 <audio id="upgradeSound" src="https://www.soundjay.com/button/sounds/button-09.mp3" preload="auto"></audio>
 
 <script>
-  // Game state variables
+  // --- Game state ---
   let score = 0;
   let clickPower = 1;
   let autoClickers = 0;
   let clickMultiplier = 1;
 
-  // Upgrade costs
+  // Costs:
   let costClickPower = 10;
   let costAutoClicker = 50;
   let costMultiplier = 100;
@@ -134,16 +123,15 @@
   const clickButton = document.getElementById('clickButton');
   const clickSound = document.getElementById('clickSound');
   const upgradeSound = document.getElementById('upgradeSound');
-
-  // Leaderboard elements
   const leaderboardList = document.getElementById('leaderboardList');
   const nameInput = document.getElementById('nameInput');
   const submitScoreBtn = document.getElementById('submitScore');
   const submitMessage = document.getElementById('submitMessage');
 
-  // Load personal highscore from localStorage
+  // Personal highscore saved locally
   let personalHighscore = parseInt(localStorage.getItem('dinoHighscore')) || 0;
 
+  // Update score display and highscore
   function updateScore() {
     scoreDisplay.textContent = 'Score: ' + Math.floor(score);
     if (score > personalHighscore) {
@@ -153,7 +141,7 @@
     }
   }
 
-  // Play sounds
+  // Sounds
   function playClickSound() {
     clickSound.currentTime = 0;
     clickSound.play();
@@ -163,14 +151,14 @@
     upgradeSound.play();
   }
 
-  // Click dino to gain points
+  // Clicking the dino
   function clickDino() {
     score += clickPower * clickMultiplier;
     updateScore();
     playClickSound();
   }
 
-  // Buy upgrades
+  // Buying upgrades
   function buyUpgrade(type) {
     switch(type) {
       case 'clickPower':
@@ -181,9 +169,7 @@
           document.getElementById('costClickPower').textContent = costClickPower;
           playUpgradeSound();
           updateScore();
-        } else {
-          alert('Not enough points for Click Power!');
-        }
+        } else alert('Not enough points for Click Power!');
         break;
       case 'autoClicker':
         if(score >= costAutoClicker) {
@@ -193,9 +179,7 @@
           document.getElementById('costAutoClicker').textContent = costAutoClicker;
           playUpgradeSound();
           updateScore();
-        } else {
-          alert('Not enough points for Auto-Clicker!');
-        }
+        } else alert('Not enough points for Auto-Clicker!');
         break;
       case 'multiplier':
         if(score >= costMultiplier) {
@@ -205,9 +189,7 @@
           document.getElementById('costMultiplier').textContent = costMultiplier;
           playUpgradeSound();
           updateScore();
-        } else {
-          alert('Not enough points for Multiplier!');
-        }
+        } else alert('Not enough points for Multiplier!');
         break;
       case 'bonusClick':
         if(score >= costBonusClick) {
@@ -217,9 +199,7 @@
           document.getElementById('costBonusClick').textContent = costBonusClick;
           playUpgradeSound();
           updateScore();
-        } else {
-          alert('Not enough points for Bonus Click!');
-        }
+        } else alert('Not enough points for Bonus Click!');
         break;
       case 'megaAutoClicker':
         if(score >= costMegaAutoClicker) {
@@ -229,9 +209,7 @@
           document.getElementById('costMegaAutoClicker').textContent = costMegaAutoClicker;
           playUpgradeSound();
           updateScore();
-        } else {
-          alert('Not enough points for Mega Auto-Clicker!');
-        }
+        } else alert('Not enough points for Mega Auto-Clicker!');
         break;
       case 'superMultiplier':
         if(score >= costSuperMultiplier) {
@@ -241,9 +219,7 @@
           document.getElementById('costSuperMultiplier').textContent = costSuperMultiplier;
           playUpgradeSound();
           updateScore();
-        } else {
-          alert('Not enough points for Super Multiplier!');
-        }
+        } else alert('Not enough points for Super Multiplier!');
         break;
       case 'ultraClick':
         if(score >= costUltraClick) {
@@ -253,9 +229,7 @@
           document.getElementById('costUltraClick').textContent = costUltraClick;
           playUpgradeSound();
           updateScore();
-        } else {
-          alert('Not enough points for Ultra Click!');
-        }
+        } else alert('Not enough points for Ultra Click!');
         break;
       case 'autoBonus':
         if(score >= costAutoBonus) {
@@ -266,14 +240,12 @@
           document.getElementById('costAutoBonus').textContent = costAutoBonus;
           playUpgradeSound();
           updateScore();
-        } else {
-          alert('Not enough points for Auto Bonus!');
-        }
+        } else alert('Not enough points for Auto Bonus!');
         break;
     }
   }
 
-  // Set event listeners for buttons
+  // Event listeners for upgrades
   document.getElementById('upgradeClickPower').addEventListener('click', () => buyUpgrade('clickPower'));
   document.getElementById('buyAutoClicker').addEventListener('click', () => buyUpgrade('autoClicker'));
   document.getElementById('buyMultiplier').addEventListener('click', () => buyUpgrade('multiplier'));
@@ -285,7 +257,7 @@
 
   clickButton.addEventListener('click', clickDino);
 
-  // Auto-clickers add points every second
+  // Auto clickers add clicks every second
   setInterval(() => {
     if(autoClickers > 0) {
       score += autoClickers * clickPower * clickMultiplier;
@@ -293,41 +265,40 @@
     }
   }, 1000);
 
-  // Leaderboard data & interaction
-  const API_BIN_ID = "64c917504e2f8e4a8ca357f8"; // Example public bin — you can create your own!
-  const API_BIN_SECRET = "secret_api_key_here"; // Leave blank or replace with your own secret if you make your own bin
+  // --- Online leaderboard with JSONBin.io ---
+
+  // Replace these with your JSONBin.io credentials
+  const API_BIN_ID = "YOUR_BIN_ID_HERE";
+  const API_BIN_SECRET = "YOUR_SECRET_KEY_HERE";
   const API_URL = `https://api.jsonbin.io/v3/b/${API_BIN_ID}/latest`;
 
-  // Load leaderboard from JSONBin
-  async function loadLeaderboard() {
-    try {
-      const res = await fetch(API_URL, {
-        headers: {
-          'X-Master-Key': API_BIN_SECRET
-        }
-      });
-      if (!res.ok) throw new Error('Could not load leaderboard');
-      const data = await res.json();
-      const scores = data.record || [];
-      displayLeaderboard(scores);
-    } catch (e) {
-      console.error(e);
-      leaderboardList.innerHTML = '<li>Failed to load leaderboard</li>';
-    }
-  }
+  let leaderboard = [];
 
-  // Display leaderboard top 5
-  function displayLeaderboard(scores) {
+  function displayLeaderboard() {
     leaderboardList.innerHTML = '';
-    scores.sort((a,b) => b.score - a.score);
-    scores.slice(0,5).forEach((entry) => {
+    leaderboard.slice(0,5).forEach(entry => {
       const li = document.createElement('li');
       li.textContent = `${entry.name} - ${entry.score}`;
       leaderboardList.appendChild(li);
     });
   }
 
-  // Submit score to leaderboard
+  async function loadLeaderboard() {
+    try {
+      const res = await fetch(API_URL, {
+        headers: { 'X-Master-Key': API_BIN_SECRET }
+      });
+      if (!res.ok) throw new Error('Failed to load leaderboard');
+      const data = await res.json();
+      leaderboard = data.record || [];
+      leaderboard.sort((a,b) => b.score - a.score);
+      displayLeaderboard();
+    } catch (e) {
+      console.error(e);
+      leaderboardList.innerHTML = '<li>Failed to load leaderboard</li>';
+    }
+  }
+
   async function submitScore() {
     const name = nameInput.value.trim();
     if(!name) {
@@ -338,24 +309,21 @@
       alert('Score must be greater than 0');
       return;
     }
+    submitMessage.style.color = 'black';
     submitMessage.textContent = 'Submitting...';
-    try {
-      // Load current scores
-      const res = await fetch(API_URL, {
-        headers: {
-          'X-Master-Key': API_BIN_SECRET
-        }
-      });
-      if (!res.ok) throw new Error('Could not load leaderboard');
 
+    try {
+      // Fetch current scores
+      const res = await fetch(API_URL, {
+        headers: { 'X-Master-Key': API_BIN_SECRET }
+      });
+      if (!res.ok) throw new Error('Failed to load leaderboard');
       const data = await res.json();
       let scores = data.record || [];
 
-      // Add new score
-      scores.push({name, score: personalHighscore});
-
-      // Sort and trim to top 10
-      scores = scores.sort((a,b) => b.score - a.score).slice(0,10);
+      // Add new score and sort
+      scores.push({ name, score: personalHighscore });
+      scores = scores.sort((a,b) => b.score - a.score).slice(0, 10);
 
       // Update bin with new scores
       const updateRes = await fetch(`https://api.jsonbin.io/v3/b/${API_BIN_ID}`, {
@@ -364,15 +332,17 @@
           'Content-Type': 'application/json',
           'X-Master-Key': API_BIN_SECRET,
         },
-        body: JSON.stringify(scores)
+        body: JSON.stringify(scores),
       });
 
       if (!updateRes.ok) throw new Error('Failed to submit score');
 
-      displayLeaderboard(scores);
-      submitMessage.textContent = 'Score submitted successfully!';
+      leaderboard = scores;
+      displayLeaderboard();
+      submitMessage.style.color = 'green';
+      submitMessage.textContent = 'Score submitted!';
       nameInput.value = '';
-    } catch(e) {
+    } catch (e) {
       console.error(e);
       submitMessage.style.color = 'red';
       submitMessage.textContent = 'Failed to submit score.';
@@ -381,10 +351,11 @@
 
   submitScoreBtn.addEventListener('click', submitScore);
 
-  // Initialize
+  // Initialize displays
   highscoreDisplay.textContent = 'Personal Highscore: ' + personalHighscore;
   updateScore();
   loadLeaderboard();
+
 </script>
 
 </body>
