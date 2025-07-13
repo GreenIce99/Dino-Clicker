@@ -1,1 +1,1 @@
-# Dino-Clicker
+# dino-clicker
