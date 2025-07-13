@@ -1,312 +1,375 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dino Clicker Deluxe 🦖</title>
-<style>
-  body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background: url('https://i.imgur.com/8LgL0fu.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: #332e1c;
-    text-align: center;
-    margin: 0;
-    padding: 0 10px 50px;
-  }
-  h1 {
-    margin-top: 20px;
-    text-shadow: 2px 2px 5px #a97c50;
-  }
-  #game-container {
-    margin-top: 10px;
-  }
-  #dino {
-    width: 180px;
-    cursor: pointer;
-    user-select: none;
-    filter: drop-shadow(2px 2px 3px #654321);
-  }
-  #score {
-    font-size: 2em;
-    margin: 15px 0;
-    text-shadow: 1px 1px 2px #a97c50;
-  }
-  .shop button {
-    background-color: #6b8e23;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1em;
-    padding: 12px 20px;
-    margin: 10px auto;
-    cursor: pointer;
-    display: block;
-    width: 280px;
-    box-shadow: 2px 2px 5px #3d5b1c;
-    transition: background-color 0.3s ease;
-  }
-  .shop button:hover {
-    background-color: #556b2f;
-  }
-  #mute-btn {
-    margin-top: 15px;
-    font-size: 1.2em;
-    padding: 8px 16px;
-    cursor: pointer;
-  }
-  #leaderboard {
-    margin-top: 40px;
-    background: rgba(255 255 255 / 0.8);
-    border-radius: 12px;
-    max-width: 350px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 15px;
-    box-shadow: 0 0 10px #a97c50;
-  }
-  #leaderboard input {
-    font-size: 1em;
-    padding: 8px;
-    width: 80%;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    border: 1px solid #a97c50;
-  }
-  #leaderboard button {
-    font-size: 1em;
-    padding: 8px 16px;
-    cursor: pointer;
-    background-color: #8b4513;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    width: 85%;
-    box-shadow: 2px 2px 5px #5a2e0a;
-    transition: background-color 0.3s ease;
-  }
-  #leaderboard button:hover {
-    background-color: #5a2e0a;
-  }
-  #leaderboardList {
-    list-style: none;
-    padding-left: 0;
-    margin-top: 10px;
-    max-height: 220px;
-    overflow-y: auto;
-  }
-  #leaderboardList li {
-    padding: 6px 0;
-    font-weight: bold;
-    border-bottom: 1px solid #a97c50;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dino Clicker Deluxe - No Images</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #2c3e50, #3498db);
+      font-family: 'Press Start 2P', cursive, monospace;
+      color: #f0f8ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      user-select: none;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 6px #000000aa;
+      letter-spacing: 3px;
+    }
+
+    #click-area {
+      background: #27ae60;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 0 25px #2ecc71;
+      transition: transform 0.15s ease;
+      font-size: 4rem;
+      font-weight: bold;
+      user-select: none;
+      margin-bottom: 25px;
+      color: #ecf0f1;
+      text-shadow: 1px 1px 5px #145214;
+    }
+
+    #click-area:active {
+      transform: scale(0.95);
+      box-shadow: 0 0 35px #27ae60;
+    }
+
+    #score {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 3px #000000bb;
+      letter-spacing: 2px;
+    }
+
+    #upgrades {
+      max-width: 360px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    button.upgrade-btn {
+      background: linear-gradient(45deg, #16a085, #27ae60);
+      border: none;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-family: 'Press Start 2P', cursive, monospace;
+      font-size: 1rem;
+      color: #ecf0f1;
+      cursor: pointer;
+      box-shadow: 0 0 8px #16a085;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+      text-align: left;
+    }
+
+    button.upgrade-btn:hover:not(:disabled) {
+      background: linear-gradient(45deg, #1abc9c, #2ecc71);
+      box-shadow: 0 0 15px #1abc9c;
+    }
+
+    button.upgrade-btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+      box-shadow: none;
+      color: #999;
+    }
+
+    #mute-btn {
+      margin-top: 5px;
+      padding: 10px 20px;
+      font-family: 'Press Start 2P', cursive, monospace;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      background: #34495e;
+      color: #ecf0f1;
+      cursor: pointer;
+      box-shadow: 0 0 10px #34495e;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+
+    #mute-btn:hover {
+      background: #2c3e50;
+    }
+
+    #leaderboard {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 15px;
+      max-width: 360px;
+      width: 100%;
+      padding: 15px 20px;
+      box-shadow: 0 0 15px #27ae60aa;
+      color: #ecf0f1;
+      user-select: none;
+    }
+
+    #leaderboard h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 3px #000000bb;
+    }
+
+    #leaderboard input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Press Start 2P', cursive, monospace;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      box-shadow: inset 0 0 8px #16a085;
+      outline: none;
+      color: #333;
+    }
+
+    #leaderboard button {
+      width: 100%;
+      padding: 12px 0;
+      font-family: 'Press Start 2P', cursive, monospace;
+      font-size: 1rem;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(45deg, #16a085, #27ae60);
+      color: #ecf0f1;
+      cursor: pointer;
+      box-shadow: 0 0 10px #16a085;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+
+    #leaderboard button:hover {
+      background: linear-gradient(45deg, #1abc9c, #2ecc71);
+    }
+
+    #leaderboardList {
+      margin-top: 10px;
+      list-style-type: none;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-left: 0;
+      font-size: 0.85rem;
+      letter-spacing: 1.5px;
+    }
+
+    #leaderboardList li {
+      padding: 8px 5px;
+      border-bottom: 1px solid #1abc9c88;
+      text-shadow: 1px 1px 2px #000000bb;
+    }
+  </style>
 </head>
 <body>
+  <h1>Dino Clicker Deluxe</h1>
 
-<h1>🦖 Dino Clicker Deluxe</h1>
+  <div id="click-area" title="Click me to get Bones!">🦴</div>
 
-<div id="game-container">
-  <img id="dino" src="https://i.imgur.com/kLVxf3D.png" alt="Dino" />
   <div id="score">Bones: 0</div>
-  <div id="upgrades" class="shop"></div>
+
+  <div id="upgrades"></div>
+
   <button id="mute-btn">🔊 Mute</button>
-</div>
 
-<div id="leaderboard">
-  <h2>🏆 Leaderboard (Local)</h2>
-  <input id="playerName" placeholder="Enter Dino Name" />
-  <button id="submitScoreBtn">Save Highscore</button>
-  <p id="saveMsg"></p>
-  <ul id="leaderboardList"></ul>
-</div>
+  <div id="leaderboard">
+    <h2>🏆 Leaderboard (Local)</h2>
+    <input id="playerName" placeholder="Enter Dino Name" />
+    <button id="submitScoreBtn">Save Highscore</button>
+    <p id="saveMsg"></p>
+    <ul id="leaderboardList"></ul>
+  </div>
 
-<script>
-// Dino Clicker Deluxe Script
+  <script>
+    // Variables and Elements
+    const clickArea = document.getElementById('click-area');
+    const scoreEl = document.getElementById('score');
+    const upgradesEl = document.getElementById('upgrades');
+    const muteBtn = document.getElementById('mute-btn');
+    const leaderboardList = document.getElementById('leaderboardList');
+    const saveMsg = document.getElementById('saveMsg');
+    const playerNameInput = document.getElementById('playerName');
+    const submitScoreBtn = document.getElementById('submitScoreBtn');
 
-const dino = document.getElementById("dino");
-const scoreEl = document.getElementById("score");
-const upgradesEl = document.getElementById("upgrades");
-const muteBtn = document.getElementById("mute-btn");
+    let bones = 0;
+    let bonesPerClick = 1;
+    let autoBones = 0;
+    let isMuted = false;
 
-const leaderboardList = document.getElementById("leaderboardList");
-const saveMsg = document.getElementById("saveMsg");
-const playerNameInput = document.getElementById("playerName");
-const submitScoreBtn = document.getElementById("submitScoreBtn");
+    // Sounds
+    const clickSound = new Audio("https://freesound.org/data/previews/64/64167_634166-lq.mp3");
+    const upgradeSound = new Audio("https://freesound.org/data/previews/146/146721_2638296-lq.mp3");
+    const roarSound = new Audio("https://freesound.org/data/previews/156/156703_2562974-lq.mp3");
+    const bgMusic = new Audio("https://cdn.pixabay.com/download/audio/2022/11/12/audio_41fbe9d5d7.mp3?filename=happy-birthday-to-you-7-6380.mp3");
+    bgMusic.loop = true;
+    bgMusic.volume = 0.3;
 
-let bones = 0;
-let bonesPerClick = 1;
-let autoBones = 0;
-let isMuted = false;
+    // Upgrades
+    const upgrades = [
+      { id: "claws", name: "Sharper Claws", cost: 10, bonus: 1, type: "click" },
+      { id: "fangs", name: "Fiercer Roar", cost: 30, bonus: 3, type: "click" },
+      { id: "tail", name: "Tail Swipe", cost: 100, bonus: 10, type: "click" },
+      { id: "auto1", name: "Dino Minions", cost: 50, bonus: 1, type: "auto" },
+      { id: "magnet", name: "Bone Magnet", cost: 200, bonus: 2, type: "auto" },
+      { id: "eggFactory", name: "Egg Factory", cost: 1000, bonus: 10, type: "auto" },
+      { id: "volcano", name: "Volcano Rage", cost: 5000, bonus: 20, type: "click" },
+      { id: "meteor", name: "Meteor Shower", cost: 10000, bonus: 50, type: "click" },
+      { id: "goldenDino", name: "Golden Dino", cost: 50000, bonus: 100, type: "auto" },
+    ];
 
-// Sounds
-const clickSound = new Audio("https://freesound.org/data/previews/64/64167_634166-lq.mp3");
-const upgradeSound = new Audio("https://freesound.org/data/previews/146/146721_2638296-lq.mp3");
-const roarSound = new Audio("https://freesound.org/data/previews/156/156703_2562974-lq.mp3");
-const bgMusic = new Audio("https://cdn.pixabay.com/download/audio/2022/11/12/audio_41fbe9d5d7.mp3?filename=happy-birthday-to-you-7-6380.mp3");
+    const ownedUpgrades = {};
 
-bgMusic.loop = true;
-bgMusic.volume = 0.3;
-
-// Upgrades list
-const upgrades = [
-  { id: "claws", name: "Sharper Claws", cost: 10, bonus: 1, type: "click" },
-  { id: "fangs", name: "Fiercer Roar", cost: 30, bonus: 3, type: "click" },
-  { id: "tail", name: "Tail Swipe", cost: 100, bonus: 10, type: "click" },
-  { id: "auto1", name: "Dino Minions", cost: 50, bonus: 1, type: "auto" },
-  { id: "magnet", name: "Bone Magnet", cost: 200, bonus: 2, type: "auto" },
-  { id: "eggFactory", name: "Egg Factory", cost: 1000, bonus: 10, type: "auto" },
-  { id: "volcano", name: "Volcano Rage", cost: 5000, bonus: 20, type: "click" },
-  { id: "meteor", name: "Meteor Shower", cost: 10000, bonus: 50, type: "click" },
-  { id: "goldenDino", name: "Golden Dino", cost: 50000, bonus: 100, type: "auto" },
-];
-
-// Track owned upgrades and costs
-const ownedUpgrades = {};
-
-// Load saved game state
-function loadGame() {
-  const saved = JSON.parse(localStorage.getItem("dinoClickerSave"));
-  if (saved) {
-    bones = saved.bones || 0;
-    bonesPerClick = saved.bonesPerClick || 1;
-    autoBones = saved.autoBones || 0;
-    Object.assign(ownedUpgrades, saved.ownedUpgrades || {});
-  }
-  updateScore();
-}
-
-// Save game state
-function saveGame() {
-  const saveData = {
-    bones,
-    bonesPerClick,
-    autoBones,
-    ownedUpgrades,
-  };
-  localStorage.setItem("dinoClickerSave", JSON.stringify(saveData));
-}
-
-// Update score display
-function updateScore() {
-  scoreEl.textContent = `Bones: ${bones}`;
-}
-
-// Play sound helper
-function playSound(sound) {
-  if (!isMuted) {
-    sound.currentTime = 0;
-    sound.play();
-  }
-}
-
-// Handle dino click
-dino.addEventListener("click", () => {
-  bones += bonesPerClick;
-  playSound(clickSound);
-  updateScore();
-  saveGame();
-});
-
-// Build upgrades shop UI
-function buildShop() {
-  upgradesEl.innerHTML = "";
-  upgrades.forEach((up) => {
-    const btn = document.createElement("button");
-    btn.id = up.id;
-    btn.textContent = `${up.name} (${up.type === "click" ? "+" + up.bonus + " per click" : "+" + up.bonus + "/sec"}) - Cost: ${up.cost}`;
-    btn.disabled = bones < up.cost;
-    btn.onclick = () => buyUpgrade(up);
-    upgradesEl.appendChild(btn);
-  });
-}
-
-// Buy an upgrade
-function buyUpgrade(upgrade) {
-  if (bones >= upgrade.cost) {
-    bones -= upgrade.cost;
-    if (upgrade.type === "click") {
-      bonesPerClick += upgrade.bonus;
-    } else if (upgrade.type === "auto") {
-      autoBones += upgrade.bonus;
+    // Load and Save
+    function loadGame() {
+      const saved = JSON.parse(localStorage.getItem("dinoClickerSave"));
+      if (saved) {
+        bones = saved.bones || 0;
+        bonesPerClick = saved.bonesPerClick || 1;
+        autoBones = saved.autoBones || 0;
+        Object.assign(ownedUpgrades, saved.ownedUpgrades || {});
+      }
+      updateScore();
     }
-    ownedUpgrades[upgrade.id] = (ownedUpgrades[upgrade.id] || 0) + 1;
 
-    // Increase upgrade cost by 30%
-    upgrade.cost = Math.floor(upgrade.cost * 1.3);
+    function saveGame() {
+      const saveData = {
+        bones,
+        bonesPerClick,
+        autoBones,
+        ownedUpgrades,
+      };
+      localStorage.setItem("dinoClickerSave", JSON.stringify(saveData));
+    }
 
-    playSound(upgradeSound);
-    updateScore();
+    function updateScore() {
+      scoreEl.textContent = `Bones: ${bones}`;
+    }
+
+    function playSound(sound) {
+      if (!isMuted) {
+        sound.currentTime = 0;
+        sound.play();
+      }
+    }
+
+    clickArea.addEventListener('click', () => {
+      bones += bonesPerClick;
+      playSound(clickSound);
+      updateScore();
+      saveGame();
+      buildShop();
+    });
+
+    function buildShop() {
+      upgradesEl.innerHTML = "";
+      upgrades.forEach(up => {
+        const btn = document.createElement('button');
+        btn.className = 'upgrade-btn';
+        btn.id = up.id;
+        btn.textContent = `${up.name} (${up.type === "click" ? "+" + up.bonus + " per click" : "+" + up.bonus + "/sec"}) - Cost: ${up.cost}`;
+        btn.disabled = bones < up.cost;
+        btn.onclick = () => buyUpgrade(up);
+        upgradesEl.appendChild(btn);
+      });
+    }
+
+    function buyUpgrade(upgrade) {
+      if (bones >= upgrade.cost) {
+        bones -= upgrade.cost;
+        if (upgrade.type === "click") {
+          bonesPerClick += upgrade.bonus;
+        } else if (upgrade.type === "auto") {
+          autoBones += upgrade.bonus;
+        }
+        ownedUpgrades[upgrade.id] = (ownedUpgrades[upgrade.id] || 0) + 1;
+        upgrade.cost = Math.floor(upgrade.cost * 1.3);
+        playSound(upgradeSound);
+        updateScore();
+        buildShop();
+        saveGame();
+      }
+    }
+
+    setInterval(() => {
+      bones += autoBones;
+      if (autoBones > 0) playSound(roarSound);
+      updateScore();
+      saveGame();
+      buildShop();
+    }, 1000);
+
+    muteBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      if (isMuted) {
+        bgMusic.pause();
+        muteBtn.textContent = "🔇 Muted";
+      } else {
+        bgMusic.play();
+        muteBtn.textContent = "🔊 Mute";
+      }
+    });
+
+    window.addEventListener('click', () => {
+      if (!isMuted && bgMusic.paused) {
+        bgMusic.play();
+      }
+    });
+
+    // Leaderboard
+    function showLeaderboard() {
+      const leaderboard = JSON.parse(localStorage.getItem("dinoLeaderboard") || "[]");
+      leaderboardList.innerHTML = leaderboard
+        .map(entry => `<li>${entry.name}: ${entry.score} 🦴</li>`)
+        .join('');
+    }
+
+    function submitScore() {
+      const name = playerNameInput.value.trim();
+      if (!name) {
+        saveMsg.textContent = "Enter your dino name!";
+        return;
+      }
+      const leaderboard = JSON.parse(localStorage.getItem("dinoLeaderboard") || "[]");
+      const existing = leaderboard.find(e => e.name === name);
+      if (existing) {
+        if (bones > existing.score) existing.score = bones;
+      } else {
+        leaderboard.push({ name, score: bones });
+      }
+      leaderboard.sort((a, b) => b.score - a.score);
+      localStorage.setItem("dinoLeaderboard", JSON.stringify(leaderboard.slice(0, 10)));
+      saveMsg.textContent = "Score saved!";
+      showLeaderboard();
+      playerNameInput.value = "";
+    }
+
+    submitScoreBtn.addEventListener('click', submitScore);
+
+    // Init
+    loadGame();
     buildShop();
-    saveGame();
-  }
-}
+    showLeaderboard();
+    updateScore();
 
-// Auto collect bones every second
-setInterval(() => {
-  bones += autoBones;
-  if (autoBones > 0) playSound(roarSound);
-  updateScore();
-  saveGame();
-  buildShop();
-}, 1000);
-
-// Mute/unmute music
-muteBtn.addEventListener("click", () => {
-  isMuted = !isMuted;
-  if (isMuted) {
-    bgMusic.pause();
-    muteBtn.textContent = "🔇 Muted";
-  } else {
-    bgMusic.play();
-    muteBtn.textContent = "🔊 Mute";
-  }
-});
-
-// Start music automatically (some browsers block autoplay)
-window.addEventListener("click", () => {
-  if (!isMuted && bgMusic.paused) {
-    bgMusic.play();
-  }
-});
-
-// Leaderboard
-
-function showLeaderboard() {
-  const leaderboard = JSON.parse(localStorage.getItem("dinoLeaderboard") || "[]");
-  leaderboardList.innerHTML = leaderboard
-    .map((entry) => `<li>${entry.name}: ${entry.score} 🦴</li>`)
-    .join("");
-}
-
-function submitScore() {
-  const name = playerNameInput.value.trim();
-  if (!name) {
-    saveMsg.textContent = "Enter your dino name!";
-    return;
-  }
-  const leaderboard = JSON.parse(localStorage.getItem("dinoLeaderboard") || "[]");
-  const existing = leaderboard.find((e) => e.name === name);
-  if (existing) {
-    if (bones > existing.score) existing.score = bones;
-  } else {
-    leaderboard.push({ name, score: bones });
-  }
-  leaderboard.sort((a, b) => b.score - a.score);
-  localStorage.setItem("dinoLeaderboard", JSON.stringify(leaderboard.slice(0, 10)));
-  saveMsg.textContent = "Score saved!";
-  showLeaderboard();
-  playerNameInput.value = "";
-}
-
-submitScoreBtn.addEventListener("click", submitScore);
-
-// Initialize game
-loadGame();
-buildShop();
-showLeaderboard();
-updateScore();
-</script>
-
+  </script>
 </body>
 </html>
