@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Dino Clicker 🦖 - Online Leaderboard</title>
+<title>Dino Clicker 🦖 - Dino Power Upgrades & Leaderboard</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -72,33 +72,38 @@
 <body>
 
 <h1>Dino Clicker 🦖</h1>
-<div id="score">Score: 0</div>
+<div id="score">Bones Collected: 0</div>
 <div id="highscore">Personal Highscore: 0</div>
 
-<button class="button" id="clickButton">Click Me!</button>
+<button class="button" id="clickButton">🦖 STOMP the Dino!</button>
 
 <div id="upgrades">
-  <h2>Upgrades</h2>
-  <div class="upgrade-item"><button class="button" id="upgradeClickPower">+1 Click Power (<span id="costClickPower">10</span> pts)</button></div>
-  <div class="upgrade-item"><button class="button" id="buyAutoClicker">Auto-Clicker (<span id="costAutoClicker">50</span> pts)</button></div>
-  <div class="upgrade-item"><button class="button" id="buyMultiplier">Click Multiplier x2 (<span id="costMultiplier">100</span> pts)</button></div>
-  <div class="upgrade-item"><button class="button" id="buyBonusClick">Bonus +5 Click Power (<span id="costBonusClick">300</span> pts)</button></div>
-  <div class="upgrade-item"><button class="button" id="buyMegaAutoClicker">Mega Auto-Clicker (x5 clicks/sec) (<span id="costMegaAutoClicker">1000</span> pts)</button></div>
-  <div class="upgrade-item"><button class="button" id="buySuperMultiplier">Super Multiplier x5 (<span id="costSuperMultiplier">3000</span> pts)</button></div>
-  <div class="upgrade-item"><button class="button" id="buyUltraClick">Ultra Click +50 (<span id="costUltraClick">10000</span> pts)</button></div>
-  <div class="upgrade-item"><button class="button" id="buyAutoBonus">Auto Bonus +10 Click Power (<span id="costAutoBonus">25000</span> pts)</button></div>
+  <h2>Dino Upgrades</h2>
+  <div class="upgrade-item"><button class="button" id="upgradeClawPower">+1 Claw Power (<span id="costClawPower">10</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyBabyHelper">Baby Dino Helper (Auto-Stomp) (<span id="costBabyHelper">50</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyRaptorRage">Raptor Rage x2 Multiplier (<span id="costRaptorRage">100</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyTRexBite">T-Rex Bite +5 Power (<span id="costTRexBite">300</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyDinoHerd">Dino Herd Auto-Stomp x5 (<span id="costDinoHerd">1000</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyAncientRoar">Ancient Dino Roar x5 Multiplier (<span id="costAncientRoar">3000</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyMeteorSmash">Meteor Smash +50 Power (<span id="costMeteorSmash">10000</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyDinoAlpha">Dino Alpha Bonus +10 Power & Helpers (<span id="costDinoAlpha">25000</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyPteroStrike">Pterodactyl Strike x10 Multiplier (<span id="costPteroStrike">70000</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyStegoShield">Stegosaurus Shield +200 Power (<span id="costStegoShield">150000</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyFossilFuel">Fossil Fuel Auto-Stomp +50 (<span id="costFossilFuel">400000</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyMeteorShower">Meteor Shower x20 Multiplier (<span id="costMeteorShower">900000</span> bones)</button></div>
+  <div class="upgrade-item"><button class="button" id="buyVolcanoPower">Volcano Power +1000 Click (<span id="costVolcanoPower">2000000</span> bones)</button></div>
 </div>
 
 <div id="leaderboard">
-  <h2>Leaderboard - Top 5</h2>
+  <h2>Dino Leaderboard - Top 5 Stompers</h2>
   <ol id="leaderboardList"></ol>
-  <input type="text" id="nameInput" placeholder="Enter your name" maxlength="12" />
-  <button class="button" id="submitScore">Submit Score</button>
+  <input type="text" id="nameInput" placeholder="Enter your dino name" maxlength="12" />
+  <button class="button" id="submitScore">Roar and Submit Score</button>
   <div id="submitMessage"></div>
 </div>
 
-<audio id="clickSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
-<audio id="upgradeSound" src="https://www.soundjay.com/button/sounds/button-09.mp3" preload="auto"></audio>
+<audio id="clickSound" src="https://freesound.org/data/previews/341/341695_5121236-lq.mp3" preload="auto"></audio>
+<audio id="upgradeSound" src="https://freesound.org/data/previews/172/172999_324123-lq.mp3" preload="auto"></audio>
 
 <script>
   // --- Game state ---
@@ -107,15 +112,20 @@
   let autoClickers = 0;
   let clickMultiplier = 1;
 
-  // Costs:
-  let costClickPower = 10;
-  let costAutoClicker = 50;
-  let costMultiplier = 100;
-  let costBonusClick = 300;
-  let costMegaAutoClicker = 1000;
-  let costSuperMultiplier = 3000;
-  let costUltraClick = 10000;
-  let costAutoBonus = 25000;
+  // Costs for upgrades
+  let costClawPower = 10;
+  let costBabyHelper = 50;
+  let costRaptorRage = 100;
+  let costTRexBite = 300;
+  let costDinoHerd = 1000;
+  let costAncientRoar = 3000;
+  let costMeteorSmash = 10000;
+  let costDinoAlpha = 25000;
+  let costPteroStrike = 70000;
+  let costStegoShield = 150000;
+  let costFossilFuel = 400000;
+  let costMeteorShower = 900000;
+  let costVolcanoPower = 2000000;
 
   // DOM elements
   const scoreDisplay = document.getElementById('score');
@@ -131,9 +141,8 @@
   // Personal highscore saved locally
   let personalHighscore = parseInt(localStorage.getItem('dinoHighscore')) || 0;
 
-  // Update score display and highscore
   function updateScore() {
-    scoreDisplay.textContent = 'Score: ' + Math.floor(score);
+    scoreDisplay.textContent = 'Bones Collected: ' + Math.floor(score);
     if (score > personalHighscore) {
       personalHighscore = Math.floor(score);
       localStorage.setItem('dinoHighscore', personalHighscore);
@@ -141,7 +150,6 @@
     }
   }
 
-  // Sounds
   function playClickSound() {
     clickSound.currentTime = 0;
     clickSound.play();
@@ -151,7 +159,10 @@
     upgradeSound.play();
   }
 
-  // Clicking the dino
+  function alertDino(msg) {
+    alert("🦖 Dino says: " + msg);
+  }
+
   function clickDino() {
     score += clickPower * clickMultiplier;
     updateScore();
@@ -161,99 +172,154 @@
   // Buying upgrades
   function buyUpgrade(type) {
     switch(type) {
-      case 'clickPower':
-        if(score >= costClickPower) {
-          score -= costClickPower;
+      case 'clawPower':
+        if(score >= costClawPower) {
+          score -= costClawPower;
           clickPower += 1;
-          costClickPower = Math.floor(costClickPower * 1.5);
-          document.getElementById('costClickPower').textContent = costClickPower;
+          costClawPower = Math.floor(costClawPower * 1.5);
+          document.getElementById('costClawPower').textContent = costClawPower;
           playUpgradeSound();
           updateScore();
-        } else alert('Not enough points for Click Power!');
+        } else alertDino("You need more bones for Claw Power!");
         break;
-      case 'autoClicker':
-        if(score >= costAutoClicker) {
-          score -= costAutoClicker;
+      case 'babyHelper':
+        if(score >= costBabyHelper) {
+          score -= costBabyHelper;
           autoClickers += 1;
-          costAutoClicker = Math.floor(costAutoClicker * 2);
-          document.getElementById('costAutoClicker').textContent = costAutoClicker;
+          costBabyHelper = Math.floor(costBabyHelper * 2);
+          document.getElementById('costBabyHelper').textContent = costBabyHelper;
           playUpgradeSound();
           updateScore();
-        } else alert('Not enough points for Auto-Clicker!');
+        } else alertDino("Not enough bones for Baby Dino Helper!");
         break;
-      case 'multiplier':
-        if(score >= costMultiplier) {
-          score -= costMultiplier;
+      case 'raptorRage':
+        if(score >= costRaptorRage) {
+          score -= costRaptorRage;
           clickMultiplier *= 2;
-          costMultiplier = Math.floor(costMultiplier * 3);
-          document.getElementById('costMultiplier').textContent = costMultiplier;
+          costRaptorRage = Math.floor(costRaptorRage * 3);
+          document.getElementById('costRaptorRage').textContent = costRaptorRage;
           playUpgradeSound();
           updateScore();
-        } else alert('Not enough points for Multiplier!');
+        } else alertDino("Need more bones for Raptor Rage!");
         break;
-      case 'bonusClick':
-        if(score >= costBonusClick) {
-          score -= costBonusClick;
+      case 'tRexBite':
+        if(score >= costTRexBite) {
+          score -= costTRexBite;
           clickPower += 5;
-          costBonusClick = Math.floor(costBonusClick * 2);
-          document.getElementById('costBonusClick').textContent = costBonusClick;
+          costTRexBite = Math.floor(costTRexBite * 2);
+          document.getElementById('costTRexBite').textContent = costTRexBite;
           playUpgradeSound();
           updateScore();
-        } else alert('Not enough points for Bonus Click!');
+        } else alertDino("More bones needed for T-Rex Bite!");
         break;
-      case 'megaAutoClicker':
-        if(score >= costMegaAutoClicker) {
-          score -= costMegaAutoClicker;
+      case 'dinoHerd':
+        if(score >= costDinoHerd) {
+          score -= costDinoHerd;
           autoClickers += 5;
-          costMegaAutoClicker = Math.floor(costMegaAutoClicker * 2.5);
-          document.getElementById('costMegaAutoClicker').textContent = costMegaAutoClicker;
+          costDinoHerd = Math.floor(costDinoHerd * 2.5);
+          document.getElementById('costDinoHerd').textContent = costDinoHerd;
           playUpgradeSound();
           updateScore();
-        } else alert('Not enough points for Mega Auto-Clicker!');
+        } else alertDino("Bones not enough for Dino Herd!");
         break;
-      case 'superMultiplier':
-        if(score >= costSuperMultiplier) {
-          score -= costSuperMultiplier;
+      case 'ancientRoar':
+        if(score >= costAncientRoar) {
+          score -= costAncientRoar;
           clickMultiplier *= 5;
-          costSuperMultiplier = Math.floor(costSuperMultiplier * 3.5);
-          document.getElementById('costSuperMultiplier').textContent = costSuperMultiplier;
+          costAncientRoar = Math.floor(costAncientRoar * 3.5);
+          document.getElementById('costAncientRoar').textContent = costAncientRoar;
           playUpgradeSound();
           updateScore();
-        } else alert('Not enough points for Super Multiplier!');
+        } else alertDino("Gather more bones for Ancient Dino Roar!");
         break;
-      case 'ultraClick':
-        if(score >= costUltraClick) {
-          score -= costUltraClick;
+      case 'meteorSmash':
+        if(score >= costMeteorSmash) {
+          score -= costMeteorSmash;
           clickPower += 50;
-          costUltraClick = Math.floor(costUltraClick * 4);
-          document.getElementById('costUltraClick').textContent = costUltraClick;
+          costMeteorSmash = Math.floor(costMeteorSmash * 4);
+          document.getElementById('costMeteorSmash').textContent = costMeteorSmash;
           playUpgradeSound();
           updateScore();
-        } else alert('Not enough points for Ultra Click!');
+        } else alertDino("Not enough bones for Meteor Smash!");
         break;
-      case 'autoBonus':
-        if(score >= costAutoBonus) {
-          score -= costAutoBonus;
+      case 'dinoAlpha':
+        if(score >= costDinoAlpha) {
+          score -= costDinoAlpha;
           autoClickers += 10;
           clickPower += 10;
-          costAutoBonus = Math.floor(costAutoBonus * 4.5);
-          document.getElementById('costAutoBonus').textContent = costAutoBonus;
+          costDinoAlpha = Math.floor(costDinoAlpha * 4.5);
+          document.getElementById('costDinoAlpha').textContent = costDinoAlpha;
           playUpgradeSound();
           updateScore();
-        } else alert('Not enough points for Auto Bonus!');
+        } else alertDino("Bones missing for Dino Alpha Bonus!");
+        break;
+      case 'pteroStrike':
+        if(score >= costPteroStrike) {
+          score -= costPteroStrike;
+          clickMultiplier *= 10;
+          costPteroStrike = Math.floor(costPteroStrike * 4);
+          document.getElementById('costPteroStrike').textContent = costPteroStrike;
+          playUpgradeSound();
+          updateScore();
+        } else alertDino("You need more bones for Pterodactyl Strike!");
+        break;
+      case 'stegoShield':
+        if(score >= costStegoShield) {
+          score -= costStegoShield;
+          clickPower += 200;
+          costStegoShield = Math.floor(costStegoShield * 4);
+          document.getElementById('costStegoShield').textContent = costStegoShield;
+          playUpgradeSound();
+          updateScore();
+        } else alertDino("Not enough bones for Stegosaurus Shield!");
+        break;
+      case 'fossilFuel':
+        if(score >= costFossilFuel) {
+          score -= costFossilFuel;
+          autoClickers += 50;
+          costFossilFuel = Math.floor(costFossilFuel * 3.5);
+          document.getElementById('costFossilFuel').textContent = costFossilFuel;
+          playUpgradeSound();
+          updateScore();
+        } else alertDino("Bones insufficient for Fossil Fuel Auto-Stomp!");
+        break;
+      case 'meteorShower':
+        if(score >= costMeteorShower) {
+          score -= costMeteorShower;
+          clickMultiplier *= 20;
+          costMeteorShower = Math.floor(costMeteorShower * 5);
+          document.getElementById('costMeteorShower').textContent = costMeteorShower;
+          playUpgradeSound();
+          updateScore();
+        } else alertDino("Gather more bones for Meteor Shower!");
+        break;
+      case 'volcanoPower':
+        if(score >= costVolcanoPower) {
+          score -= costVolcanoPower;
+          clickPower += 1000;
+          costVolcanoPower = Math.floor(costVolcanoPower * 5);
+          document.getElementById('costVolcanoPower').textContent = costVolcanoPower;
+          playUpgradeSound();
+          updateScore();
+        } else alertDino("Bones missing for Volcano Power!");
         break;
     }
   }
 
   // Event listeners for upgrades
-  document.getElementById('upgradeClickPower').addEventListener('click', () => buyUpgrade('clickPower'));
-  document.getElementById('buyAutoClicker').addEventListener('click', () => buyUpgrade('autoClicker'));
-  document.getElementById('buyMultiplier').addEventListener('click', () => buyUpgrade('multiplier'));
-  document.getElementById('buyBonusClick').addEventListener('click', () => buyUpgrade('bonusClick'));
-  document.getElementById('buyMegaAutoClicker').addEventListener('click', () => buyUpgrade('megaAutoClicker'));
-  document.getElementById('buySuperMultiplier').addEventListener('click', () => buyUpgrade('superMultiplier'));
-  document.getElementById('buyUltraClick').addEventListener('click', () => buyUpgrade('ultraClick'));
-  document.getElementById('buyAutoBonus').addEventListener('click', () => buyUpgrade('autoBonus'));
+  document.getElementById('upgradeClawPower').addEventListener('click', () => buyUpgrade('clawPower'));
+  document.getElementById('buyBabyHelper').addEventListener('click', () => buyUpgrade('babyHelper'));
+  document.getElementById('buyRaptorRage').addEventListener('click', () => buyUpgrade('raptorRage'));
+  document.getElementById('buyTRexBite').addEventListener('click', () => buyUpgrade('tRexBite'));
+  document.getElementById('buyDinoHerd').addEventListener('click', () => buyUpgrade('dinoHerd'));
+  document.getElementById('buyAncientRoar').addEventListener('click', () => buyUpgrade('ancientRoar'));
+  document.getElementById('buyMeteorSmash').addEventListener('click', () => buyUpgrade('meteorSmash'));
+  document.getElementById('buyDinoAlpha').addEventListener('click', () => buyUpgrade('dinoAlpha'));
+  document.getElementById('buyPteroStrike').addEventListener('click', () => buyUpgrade('pteroStrike'));
+  document.getElementById('buyStegoShield').addEventListener('click', () => buyUpgrade('stegoShield'));
+  document.getElementById('buyFossilFuel').addEventListener('click', () => buyUpgrade('fossilFuel'));
+  document.getElementById('buyMeteorShower').addEventListener('click', () => buyUpgrade('meteorShower'));
+  document.getElementById('buyVolcanoPower').addEventListener('click', () => buyUpgrade('volcanoPower'));
 
   clickButton.addEventListener('click', clickDino);
 
@@ -290,7 +356,8 @@
       });
       if (!res.ok) throw new Error('Failed to load leaderboard');
       const data = await res.json();
-      leaderboard = data.record || [];
+      // Access leaderboard array inside "leaderboard" key
+      leaderboard = data.record.leaderboard || [];
       leaderboard.sort((a,b) => b.score - a.score);
       displayLeaderboard();
     } catch (e) {
@@ -302,60 +369,69 @@
   async function submitScore() {
     const name = nameInput.value.trim();
     if(!name) {
-      alert('Please enter your name');
+      alertDino('Please enter your dino name');
       return;
     }
     if(personalHighscore === 0) {
-      alert('Score must be greater than 0');
+      alertDino('Score must be greater than 0');
       return;
     }
     submitMessage.style.color = 'black';
-    submitMessage.textContent = 'Submitting...';
+    submitMessage.textContent = 'Roaring... Submitting score!';
 
     try {
       // Fetch current scores
       const res = await fetch(API_URL, {
         headers: { 'X-Master-Key': API_BIN_SECRET }
       });
-      if (!res.ok) throw new Error('Failed to load leaderboard');
+      if(!res.ok) throw new Error('Could not fetch leaderboard');
       const data = await res.json();
-      let scores = data.record || [];
+      let currentScores = data.record.leaderboard || [];
 
-      // Add new score and sort
-      scores.push({ name, score: personalHighscore });
-      scores = scores.sort((a,b) => b.score - a.score).slice(0, 10);
+      // Add or update player score
+      const existingIndex = currentScores.findIndex(e => e.name === name);
+      if(existingIndex >= 0) {
+        if(personalHighscore > currentScores[existingIndex].score) {
+          currentScores[existingIndex].score = personalHighscore;
+        }
+      } else {
+        currentScores.push({ name: name, score: personalHighscore });
+      }
 
-      // Update bin with new scores
+      // Sort descending and keep top 50
+      currentScores.sort((a,b) => b.score - a.score);
+      if(currentScores.length > 50) currentScores.length = 50;
+
+      // Update the bin with the leaderboard object wrapper
       const updateRes = await fetch(`https://api.jsonbin.io/v3/b/${API_BIN_ID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'X-Master-Key': API_BIN_SECRET,
+          'X-Bin-Versioning': 'false'
         },
-        body: JSON.stringify(scores),
+        body: JSON.stringify({ leaderboard: currentScores })
       });
 
-      if (!updateRes.ok) throw new Error('Failed to submit score');
+      if(!updateRes.ok) throw new Error('Failed to update leaderboard');
 
-      leaderboard = scores;
+      leaderboard = currentScores;
       displayLeaderboard();
       submitMessage.style.color = 'green';
-      submitMessage.textContent = 'Score submitted!';
-      nameInput.value = '';
-    } catch (e) {
-      console.error(e);
+      submitMessage.textContent = 'Score submitted successfully! 🦖';
+
+    } catch(e) {
       submitMessage.style.color = 'red';
-      submitMessage.textContent = 'Failed to submit score.';
+      submitMessage.textContent = 'Failed to submit score. Try again later.';
+      console.error(e);
     }
   }
 
   submitScoreBtn.addEventListener('click', submitScore);
 
-  // Initialize displays
+  loadLeaderboard();
   highscoreDisplay.textContent = 'Personal Highscore: ' + personalHighscore;
   updateScore();
-  loadLeaderboard();
-
 </script>
 
 </body>
