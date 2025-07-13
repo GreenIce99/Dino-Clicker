@@ -1,265 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Dinosaur Clicker Game 🦖</title>
-<style>
-  body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background: linear-gradient(to bottom, #98fb98, #4caf50);
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-  }
-  h1 {
-    margin-top: 30px;
-    font-size: 48px;
-    color: #2e7d32;
-    text-shadow: 2px 2px 0 #a5d6a7;
-  }
-  #dino-img {
-    width: 150px;
-    margin: 20px auto;
-    cursor: pointer;
-    transition: transform 0.1s ease;
-  }
-  #score {
-    font-size: 36px;
-    margin: 20px 0;
-    color: #1b5e20;
-    text-shadow: 1px 1px 0 #a5d6a7;
-  }
-  #clickBtn {
-    padding: 15px 40px;
-    font-size: 24px;
-    cursor: pointer;
-    border: none;
-    background-color: #388e3c;
-    color: white;
-    border-radius: 15px;
-    box-shadow: 0 5px #2e7d32;
-    margin-bottom: 20px;
-    transition: background-color 0.2s ease;
-  }
-  #clickBtn:hover {
-    background-color: #4caf50;
-  }
-  #clickBtn:active {
-    box-shadow: 0 2px #2e7d32;
-    transform: translateY(3px);
-  }
-  #upgrades {
-    margin: 30px auto;
-    max-width: 600px;
-    text-align: left;
-    background: #a5d6a7;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 0 10px #4caf50aa;
-    max-height: 350px;
-    overflow-y: auto;
-  }
-  .upgrade {
-    background: #66bb6a;
-    margin: 8px 0;
-    padding: 10px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-  }
-  .upgrade:hover {
-    background-color: #81c784;
-  }
-  .upgrade:disabled {
-    background-color: #a5d6a7;
-    cursor: not-allowed;
-    color: #eee;
-  }
-  #leaderboard {
-    margin: 40px auto 80px;
-    max-width: 400px;
-    background: #4caf50;
-    color: white;
-    padding: 15px;
-    border-radius: 15px;
-    box-shadow: 0 0 10px #2e7d32;
-  }
-  #leaderboard h2 {
-    margin-top: 0;
-    font-size: 28px;
-  }
-  #leaderboard ol {
-    padding-left: 20px;
-    text-align: left;
-  }
-  #message {
-    font-size: 18px;
-    color: #1b5e20;
-    height: 24px;
-    margin: 10px 0;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>Dino Clicker 🦖</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #c1f0c1;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 48px;
+      color: #2e7d32;
+    }
+    #dino {
+      width: 150px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #score {
+      font-size: 32px;
+      margin: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+    #upgrades {
+      margin-top: 40px;
+    }
+  </style>
 </head>
 <body>
+  <h1>Dino Clicker 🦖</h1>
+  <img id="dino" src="https://i.imgur.com/t3c9zAq.png" alt="Dino">
+  <div id="score">Score: 0</div>
+  <button onclick="clickDino()">Click Me!</button>
 
-<h1>Dinosaur Clicker 🦖</h1>
-<img id="dino-img" src="https://i.imgur.com/OV83TeH.png" alt="Dinosaur" title="Click the Dino!" />
-<div id="score">Score: 0</div>
-<button id="clickBtn">Chomp the Dino!</button>
+  <div id="upgrades">
+    <h2>Upgrades</h2>
+    <button onclick="buyUpgrade()">+1 Click Power (10 points)</button>
+  </div>
 
-<div id="message"></div>
+  <script>
+    let score = 0;
+    let clickPower = 1;
 
-<div id="upgrades">
-  <h3>Upgrades</h3>
-</div>
-
-<div id="leaderboard">
-  <h2>Leaderboard</h2>
-  <ol id="leaderboard-list"></ol>
-</div>
-
-<script>
-  const LEADERBOARD_API = 'http://localhost:3000/leaderboard'; // Change or remove for web demo
-
-  let score = 0;
-  let clickPower = 1;
-  let autoClickers = 0;
-  let multiplier = 1;
-
-  const scoreDisplay = document.getElementById('score');
-  const clickBtn = document.getElementById('clickBtn');
-  const dinoImg = document.getElementById('dino-img');
-  const upgradesDiv = document.getElementById('upgrades');
-  const message = document.getElementById('message');
-  const leaderboardList = document.getElementById('leaderboard-list');
-
-  const chompSound = new Audio('https://www.soundjay.com/button/sounds/button-16.mp3');
-  const upgradeSound = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
-
-  const upgrades = [
-    { id: 'upgrade-click', name: '🦖 Bigger Chomp', description: 'Increase click power by 1', baseCost: 10, cost: 10, count: 0, effect: () => clickPower++ },
-    { id: 'upgrade-auto', name: '🦖 Auto Chomper', description: 'Gain +1 point automatically per second', baseCost: 50, cost: 50, count: 0, effect: () => autoClickers++ },
-    { id: 'upgrade-dino-teeth', name: '🦷 Sharp Dino Teeth', description: 'Click power +5', baseCost: 200, cost: 200, count: 0, effect: () => { clickPower += 5 } },
-    { id: 'upgrade-dino-boots', name: '🦶 Dino Boots', description: 'Auto clicker speed doubles', baseCost: 500, cost: 500, count: 0, effect: () => { autoClickers += autoClickers } },
-    { id: 'upgrade-ancient-egg', name: '🥚 Ancient Dino Egg', description: 'Gain a 2x score multiplier', baseCost: 1000, cost: 1000, count: 0, effect: () => { multiplier *= 2 } },
-    { id: 'upgrade-dino-roar', name: '🦖 Dino Roar', description: 'Click power +20', baseCost: 2000, cost: 2000, count: 0, effect: () => { clickPower += 20 } },
-    { id: 'upgrade-dino-trainer', name: '🦖 Dino Trainer', description: 'Auto clickers +10', baseCost: 3000, cost: 3000, count: 0, effect: () => { autoClickers += 10 } },
-    { id: 'upgrade-fossil-finder', name: '🦴 Fossil Finder', description: 'Gain 5x multiplier', baseCost: 5000, cost: 5000, count: 0, effect: () => { multiplier *= 5 } },
-    { id: 'upgrade-volcano-booster', name: '🌋 Volcano Booster', description: 'Click power +50', baseCost: 10000, cost: 10000, count: 0, effect: () => { clickPower += 50 } },
-    { id: 'upgrade-meteor-shower', name: '☄️ Meteor Shower', description: 'Auto clickers +50', baseCost: 20000, cost: 20000, count: 0, effect: () => { autoClickers += 50 } },
-    { id: 'upgrade-dino-king', name: '👑 Dino King', description: 'Gain 10x score multiplier', baseCost: 50000, cost: 50000, count: 0, effect: () => { multiplier *= 10 } }
-  ];
-
-  function renderUpgrades() {
-    upgradesDiv.innerHTML = '<h3>Upgrades</h3>';
-    upgrades.forEach(upg => {
-      const btn = document.createElement('button');
-      btn.classList.add('upgrade');
-      btn.id = upg.id;
-      btn.disabled = true;
-      btn.textContent = `${upg.name} — Cost: ${upg.cost} (${upg.description})`;
-      const countSpan = document.createElement('span');
-      countSpan.style.marginLeft = '10px';
-      countSpan.textContent = `Owned: ${upg.count}`;
-      btn.appendChild(countSpan);
-
-      btn.addEventListener('click', () => {
-        if (score >= upg.cost) {
-          score -= upg.cost;
-          upg.count++;
-          upg.effect();
-          upg.cost = Math.floor(upg.cost * 1.7);
-          btn.textContent = `${upg.name} — Cost: ${upg.cost} (${upg.description})`;
-          btn.appendChild(countSpan);
-          countSpan.textContent = `Owned: ${upg.count}`;
-          updateScore();
-          upgradeSound.play();
-          checkUpgradeAvailability();
-          showMessage(`${upg.name} bought!`);
-        }
-      });
-
-      upgradesDiv.appendChild(btn);
-    });
-  }
-
-  function updateScore() {
-    scoreDisplay.textContent = `Score: ${score}`;
-    checkUpgradeAvailability();
-  }
-
-  function checkUpgradeAvailability() {
-    upgrades.forEach(upg => {
-      const btn = document.getElementById(upg.id);
-      btn.disabled = score < upg.cost;
-    });
-  }
-
-  function dinoClick() {
-    score += clickPower * multiplier;
-    updateScore();
-    playChompAnimation();
-    chompSound.currentTime = 0;
-    chompSound.play();
-  }
-
-  function playChompAnimation() {
-    dinoImg.style.transform = 'scale(1.1) rotate(10deg)';
-    setTimeout(() => {
-      dinoImg.style.transform = 'scale(1) rotate(0deg)';
-    }, 100);
-  }
-
-  function showMessage(text) {
-    message.textContent = text;
-    setTimeout(() => { message.textContent = ''; }, 3000);
-  }
-
-  setInterval(() => {
-    if (autoClickers > 0) {
-      score += autoClickers * multiplier;
+    function clickDino() {
+      score += clickPower;
       updateScore();
     }
-  }, 1000);
 
-  function checkGameOver() {
-    if (score >= 1000) {
-      alert(`Congratulations! You scored ${score} points! Game will reset.`);
-      resetGame();
+    function buyUpgrade() {
+      if (score >= 10) {
+        score -= 10;
+        clickPower += 1;
+        updateScore();
+        alert('Upgrade purchased! Click power is now ' + clickPower);
+      } else {
+        alert('Not enough points!');
+      }
     }
-  }
 
-  function resetGame() {
-    score = 0;
-    clickPower = 1;
-    autoClickers = 0;
-    multiplier = 1;
-    upgrades.forEach(upg => {
-      upg.cost = upg.baseCost;
-      upg.count = 0;
-    });
-    renderUpgrades();
-    updateScore();
-  }
-
-  clickBtn.addEventListener('click', () => {
-    dinoClick();
-    checkGameOver();
-  });
-  dinoImg.addEventListener('click', () => {
-    dinoClick();
-    checkGameOver();
-  });
-
-  renderUpgrades();
-  updateScore();
-</script>
-
+    function updateScore() {
+      document.getElementById('score').textContent = 'Score: ' + score;
+    }
+  </script>
 </body>
 </html>
