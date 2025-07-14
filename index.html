@@ -1,375 +1,264 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dino Clicker Deluxe - No Images</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dino Clicker Deluxe</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#27ae60" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
+    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      background: linear-gradient(135deg, #2c3e50, #3498db);
-      font-family: 'Press Start 2P', cursive, monospace;
-      color: #f0f8ff;
+      font-family: 'Press Start 2P', cursive;
+      background: linear-gradient(to bottom, #2c3e50, #27ae60);
+      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
       padding: 20px;
-      user-select: none;
+      text-align: center;
     }
-
     h1 {
-      font-size: 2.5rem;
+      font-size: 1.5rem;
       margin-bottom: 10px;
-      text-shadow: 2px 2px 6px #000000aa;
-      letter-spacing: 3px;
     }
-
-    #click-area {
-      background: #27ae60;
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      box-shadow: 0 0 25px #2ecc71;
-      transition: transform 0.15s ease;
+    #clicker {
       font-size: 4rem;
-      font-weight: bold;
-      user-select: none;
-      margin-bottom: 25px;
-      color: #ecf0f1;
-      text-shadow: 1px 1px 5px #145214;
-    }
-
-    #click-area:active {
-      transform: scale(0.95);
-      box-shadow: 0 0 35px #27ae60;
-    }
-
-    #score {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      text-shadow: 1px 1px 3px #000000bb;
-      letter-spacing: 2px;
-    }
-
-    #upgrades {
-      max-width: 360px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 30px;
-    }
-
-    button.upgrade-btn {
-      background: linear-gradient(45deg, #16a085, #27ae60);
+      background: #1abc9c;
       border: none;
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-family: 'Press Start 2P', cursive, monospace;
-      font-size: 1rem;
-      color: #ecf0f1;
+      border-radius: 50%;
+      width: 150px;
+      height: 150px;
       cursor: pointer;
-      box-shadow: 0 0 8px #16a085;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
-      text-align: left;
+      box-shadow: 0 0 20px #16a085;
+      transition: transform 0.1s;
     }
-
-    button.upgrade-btn:hover:not(:disabled) {
-      background: linear-gradient(45deg, #1abc9c, #2ecc71);
-      box-shadow: 0 0 15px #1abc9c;
+    #clicker:active {
+      transform: scale(0.95);
     }
-
-    button.upgrade-btn:disabled {
+    .stats, .upgrades, .achievements, .boosts {
+      margin-top: 20px;
+      max-width: 400px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 10px;
+    }
+    button {
+      font-family: inherit;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 0.8rem;
+      border: none;
+      background: #2980b9;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:disabled {
       background: #555;
       cursor: not-allowed;
-      box-shadow: none;
-      color: #999;
     }
-
-    #mute-btn {
+    .popup {
+      background: #e67e22;
+      color: #fff;
+      padding: 5px 10px;
       margin-top: 5px;
-      padding: 10px 20px;
-      font-family: 'Press Start 2P', cursive, monospace;
-      font-size: 1rem;
-      border: none;
-      border-radius: 12px;
-      background: #34495e;
-      color: #ecf0f1;
-      cursor: pointer;
-      box-shadow: 0 0 10px #34495e;
-      transition: background 0.3s ease;
-      user-select: none;
+      border-radius: 5px;
+      animation: fade 3s forwards;
     }
-
-    #mute-btn:hover {
-      background: #2c3e50;
+    @keyframes fade {
+      0% { opacity: 1; }
+      100% { opacity: 0; display: none; }
     }
-
-    #leaderboard {
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 15px;
-      max-width: 360px;
+    #evoBar {
       width: 100%;
-      padding: 15px 20px;
-      box-shadow: 0 0 15px #27ae60aa;
-      color: #ecf0f1;
-      user-select: none;
-    }
-
-    #leaderboard h2 {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      letter-spacing: 2px;
-      text-shadow: 1px 1px 3px #000000bb;
-    }
-
-    #leaderboard input {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: none;
-      font-family: 'Press Start 2P', cursive, monospace;
-      font-size: 0.8rem;
-      margin-bottom: 10px;
-      box-shadow: inset 0 0 8px #16a085;
-      outline: none;
-      color: #333;
-    }
-
-    #leaderboard button {
-      width: 100%;
-      padding: 12px 0;
-      font-family: 'Press Start 2P', cursive, monospace;
-      font-size: 1rem;
-      border-radius: 12px;
-      border: none;
-      background: linear-gradient(45deg, #16a085, #27ae60);
-      color: #ecf0f1;
-      cursor: pointer;
-      box-shadow: 0 0 10px #16a085;
-      transition: background 0.3s ease;
-      user-select: none;
-    }
-
-    #leaderboard button:hover {
-      background: linear-gradient(45deg, #1abc9c, #2ecc71);
-    }
-
-    #leaderboardList {
+      background: #444;
+      border-radius: 8px;
       margin-top: 10px;
-      list-style-type: none;
-      max-height: 180px;
-      overflow-y: auto;
-      padding-left: 0;
-      font-size: 0.85rem;
-      letter-spacing: 1.5px;
+      overflow: hidden;
     }
-
-    #leaderboardList li {
-      padding: 8px 5px;
-      border-bottom: 1px solid #1abc9c88;
-      text-shadow: 1px 1px 2px #000000bb;
+    #evoProgress {
+      height: 12px;
+      background: lime;
+      width: 0%;
+      transition: width 0.3s ease-in-out;
     }
   </style>
 </head>
 <body>
-  <h1>Dino Clicker Deluxe</h1>
-
-  <div id="click-area" title="Click me to get Bones!">🦴</div>
-
-  <div id="score">Bones: 0</div>
-
-  <div id="upgrades"></div>
-
-  <button id="mute-btn">🔊 Mute</button>
-
-  <div id="leaderboard">
-    <h2>🏆 Leaderboard (Local)</h2>
-    <input id="playerName" placeholder="Enter Dino Name" />
-    <button id="submitScoreBtn">Save Highscore</button>
-    <p id="saveMsg"></p>
-    <ul id="leaderboardList"></ul>
+  <h1>Dino Clicker Deluxe 🦖</h1>
+  <audio id="bgMusic" loop src="https://cdn.pixabay.com/audio/2022/03/15/audio_3d4f051418.mp3"></audio>
+  <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_545a313343.mp3"></audio>
+  <button id="clicker">🦴</button>
+  <div class="stats">
+    <p id="bones">Bones: 0</p>
+    <p id="xp">XP: 0 | Level: 1</p>
+    <div id="evoBar"><div id="evoProgress"></div></div>
+    <p id="bpc">Bones/Click: 1</p>
+    <p id="totalClicks">Total Clicks: 0</p>
   </div>
-
+  <div class="upgrades">
+    <h3>Upgrades</h3>
+    <button id="upgradeClick">Upgrade Claws (+1 BPC) - 20 Bones</button><br>
+    <button id="autoClicker">Hire Dino Worker (Auto +1/sec) - 100 Bones</button>
+  </div>
+  <div class="boosts">
+    <h3>Boosts</h3>
+    <button id="doubleBoost">2x Bones (30s)</button>
+    <p id="boostTimer"></p>
+    <button onclick="toggleMusic()">🎵 Toggle Music</button>
+  </div>
+  <div class="achievements">
+    <h3>Achievements</h3>
+    <div id="achievementList"></div>
+  </div>
+  <div id="popupArea"></div>
   <script>
-    // Variables and Elements
-    const clickArea = document.getElementById('click-area');
-    const scoreEl = document.getElementById('score');
-    const upgradesEl = document.getElementById('upgrades');
-    const muteBtn = document.getElementById('mute-btn');
-    const leaderboardList = document.getElementById('leaderboardList');
-    const saveMsg = document.getElementById('saveMsg');
-    const playerNameInput = document.getElementById('playerName');
-    const submitScoreBtn = document.getElementById('submitScoreBtn');
+    let bones = 0, xp = 0, level = 1, bonesPerClick = 1, totalClicks = 0;
+    let upgradeCost = 20, autoCost = 100;
+    let doubleBoost = false, boostCooldown = false;
+    let autoRate = 0, autoInterval;
 
-    let bones = 0;
-    let bonesPerClick = 1;
-    let autoBones = 0;
-    let isMuted = false;
+    const clicker = document.getElementById('clicker');
+    const bonesEl = document.getElementById('bones');
+    const xpEl = document.getElementById('xp');
+    const bpcEl = document.getElementById('bpc');
+    const clicksEl = document.getElementById('totalClicks');
+    const upgradeBtn = document.getElementById('upgradeClick');
+    const autoBtn = document.getElementById('autoClicker');
+    const boostBtn = document.getElementById('doubleBoost');
+    const boostTimer = document.getElementById('boostTimer');
+    const achievements = document.getElementById('achievementList');
+    const popupArea = document.getElementById('popupArea');
+    const music = document.getElementById('bgMusic');
+    const clickSound = document.getElementById('clickSound');
+    const evoProgress = document.getElementById('evoProgress');
 
-    // Sounds
-    const clickSound = new Audio("https://freesound.org/data/previews/64/64167_634166-lq.mp3");
-    const upgradeSound = new Audio("https://freesound.org/data/previews/146/146721_2638296-lq.mp3");
-    const roarSound = new Audio("https://freesound.org/data/previews/156/156703_2562974-lq.mp3");
-    const bgMusic = new Audio("https://cdn.pixabay.com/download/audio/2022/11/12/audio_41fbe9d5d7.mp3?filename=happy-birthday-to-you-7-6380.mp3");
-    bgMusic.loop = true;
-    bgMusic.volume = 0.3;
-
-    // Upgrades
-    const upgrades = [
-      { id: "claws", name: "Sharper Claws", cost: 10, bonus: 1, type: "click" },
-      { id: "fangs", name: "Fiercer Roar", cost: 30, bonus: 3, type: "click" },
-      { id: "tail", name: "Tail Swipe", cost: 100, bonus: 10, type: "click" },
-      { id: "auto1", name: "Dino Minions", cost: 50, bonus: 1, type: "auto" },
-      { id: "magnet", name: "Bone Magnet", cost: 200, bonus: 2, type: "auto" },
-      { id: "eggFactory", name: "Egg Factory", cost: 1000, bonus: 10, type: "auto" },
-      { id: "volcano", name: "Volcano Rage", cost: 5000, bonus: 20, type: "click" },
-      { id: "meteor", name: "Meteor Shower", cost: 10000, bonus: 50, type: "click" },
-      { id: "goldenDino", name: "Golden Dino", cost: 50000, bonus: 100, type: "auto" },
+    const achievementList = [
+      { id: 'click10', text: 'First 10 Clicks!', unlocked: false, condition: () => totalClicks >= 10 },
+      { id: 'bones100', text: '100 Bones Collected!', unlocked: false, condition: () => bones >= 100 },
+      { id: 'level5', text: 'Reached Level 5!', unlocked: false, condition: () => level >= 5 }
     ];
 
-    const ownedUpgrades = {};
-
-    // Load and Save
-    function loadGame() {
-      const saved = JSON.parse(localStorage.getItem("dinoClickerSave"));
-      if (saved) {
-        bones = saved.bones || 0;
-        bonesPerClick = saved.bonesPerClick || 1;
-        autoBones = saved.autoBones || 0;
-        Object.assign(ownedUpgrades, saved.ownedUpgrades || {});
-      }
-      updateScore();
+    function updateDisplay() {
+      bonesEl.textContent = `Bones: ${bones}`;
+      xpEl.textContent = `XP: ${xp} | Level: ${level}`;
+      bpcEl.textContent = `Bones/Click: ${bonesPerClick}`;
+      clicksEl.textContent = `Total Clicks: ${totalClicks}`;
+      upgradeBtn.textContent = `Upgrade Claws (+1 BPC) - ${upgradeCost} Bones`;
+      autoBtn.textContent = `Hire Dino Worker (Auto +${autoRate + 1}/sec) - ${autoCost} Bones`;
+      upgradeBtn.disabled = bones < upgradeCost;
+      autoBtn.disabled = bones < autoCost;
+      evoProgress.style.width = `${(xp / (level * 10)) * 100}%`;
     }
 
-    function saveGame() {
-      const saveData = {
-        bones,
-        bonesPerClick,
-        autoBones,
-        ownedUpgrades,
-      };
-      localStorage.setItem("dinoClickerSave", JSON.stringify(saveData));
+    function showPopup(text) {
+      const div = document.createElement('div');
+      div.className = 'popup';
+      div.textContent = text;
+      popupArea.appendChild(div);
+      setTimeout(() => popupArea.removeChild(div), 3000);
     }
 
-    function updateScore() {
-      scoreEl.textContent = `Bones: ${bones}`;
-    }
-
-    function playSound(sound) {
-      if (!isMuted) {
-        sound.currentTime = 0;
-        sound.play();
-      }
-    }
-
-    clickArea.addEventListener('click', () => {
-      bones += bonesPerClick;
-      playSound(clickSound);
-      updateScore();
-      saveGame();
-      buildShop();
-    });
-
-    function buildShop() {
-      upgradesEl.innerHTML = "";
-      upgrades.forEach(up => {
-        const btn = document.createElement('button');
-        btn.className = 'upgrade-btn';
-        btn.id = up.id;
-        btn.textContent = `${up.name} (${up.type === "click" ? "+" + up.bonus + " per click" : "+" + up.bonus + "/sec"}) - Cost: ${up.cost}`;
-        btn.disabled = bones < up.cost;
-        btn.onclick = () => buyUpgrade(up);
-        upgradesEl.appendChild(btn);
+    function checkAchievements() {
+      achievementList.forEach(ach => {
+        if (!ach.unlocked && ach.condition()) {
+          ach.unlocked = true;
+          const p = document.createElement('p');
+          p.textContent = ach.text;
+          achievements.appendChild(p);
+          showPopup(`🏆 Achievement: ${ach.text}`);
+        }
       });
     }
 
-    function buyUpgrade(upgrade) {
-      if (bones >= upgrade.cost) {
-        bones -= upgrade.cost;
-        if (upgrade.type === "click") {
-          bonesPerClick += upgrade.bonus;
-        } else if (upgrade.type === "auto") {
-          autoBones += upgrade.bonus;
+    function gainXP(amount) {
+      xp += amount;
+      if (xp >= level * 10) {
+        xp = 0;
+        level++;
+        bonesPerClick++;
+        showPopup(`🦖 Evolved to Level ${level}!`);
+      }
+    }
+
+    function randomEvent() {
+      if (Math.random() < 0.05) {
+        const bonus = Math.floor(Math.random() * 50 + 25);
+        bones += bonus;
+        showPopup(`🌠 Meteor Shower! +${bonus} Bones`);
+      }
+    }
+
+    clicker.addEventListener('click', () => {
+      const earned = bonesPerClick * (doubleBoost ? 2 : 1);
+      bones += earned;
+      totalClicks++;
+      gainXP(1);
+      updateDisplay();
+      checkAchievements();
+      randomEvent();
+      clickSound.play();
+    });
+
+    upgradeBtn.addEventListener('click', () => {
+      if (bones >= upgradeCost) {
+        bones -= upgradeCost;
+        bonesPerClick++;
+        upgradeCost = Math.floor(upgradeCost * 1.5);
+        updateDisplay();
+      }
+    });
+
+    autoBtn.addEventListener('click', () => {
+      if (bones >= autoCost) {
+        bones -= autoCost;
+        autoRate++;
+        autoCost = Math.floor(autoCost * 1.75);
+        clearInterval(autoInterval);
+        autoInterval = setInterval(() => {
+          bones += autoRate * (doubleBoost ? 2 : 1);
+          gainXP(autoRate);
+          updateDisplay();
+          checkAchievements();
+        }, 1000);
+        updateDisplay();
+      }
+    });
+
+    boostBtn.addEventListener('click', () => {
+      if (boostCooldown) return;
+      doubleBoost = true;
+      boostCooldown = true;
+      boostBtn.disabled = true;
+      let time = 30;
+      boostTimer.textContent = `Boost active: ${time}s left`;
+      const interval = setInterval(() => {
+        time--;
+        boostTimer.textContent = `Boost active: ${time}s left`;
+        if (time <= 0) {
+          clearInterval(interval);
+          doubleBoost = false;
+          boostTimer.textContent = '';
+          setTimeout(() => {
+            boostCooldown = false;
+            boostBtn.disabled = false;
+          }, 30000);
         }
-        ownedUpgrades[upgrade.id] = (ownedUpgrades[upgrade.id] || 0) + 1;
-        upgrade.cost = Math.floor(upgrade.cost * 1.3);
-        playSound(upgradeSound);
-        updateScore();
-        buildShop();
-        saveGame();
-      }
-    }
-
-    setInterval(() => {
-      bones += autoBones;
-      if (autoBones > 0) playSound(roarSound);
-      updateScore();
-      saveGame();
-      buildShop();
-    }, 1000);
-
-    muteBtn.addEventListener('click', () => {
-      isMuted = !isMuted;
-      if (isMuted) {
-        bgMusic.pause();
-        muteBtn.textContent = "🔇 Muted";
-      } else {
-        bgMusic.play();
-        muteBtn.textContent = "🔊 Mute";
-      }
+      }, 1000);
     });
 
-    window.addEventListener('click', () => {
-      if (!isMuted && bgMusic.paused) {
-        bgMusic.play();
-      }
+    function toggleMusic() {
+      if (music.paused) music.play();
+      else music.pause();
+    }
+
+    window.addEventListener('load', () => {
+      updateDisplay();
+      music.volume = 0.3;
+      music.play().catch(() => {}); // Autoplay might be blocked
     });
-
-    // Leaderboard
-    function showLeaderboard() {
-      const leaderboard = JSON.parse(localStorage.getItem("dinoLeaderboard") || "[]");
-      leaderboardList.innerHTML = leaderboard
-        .map(entry => `<li>${entry.name}: ${entry.score} 🦴</li>`)
-        .join('');
-    }
-
-    function submitScore() {
-      const name = playerNameInput.value.trim();
-      if (!name) {
-        saveMsg.textContent = "Enter your dino name!";
-        return;
-      }
-      const leaderboard = JSON.parse(localStorage.getItem("dinoLeaderboard") || "[]");
-      const existing = leaderboard.find(e => e.name === name);
-      if (existing) {
-        if (bones > existing.score) existing.score = bones;
-      } else {
-        leaderboard.push({ name, score: bones });
-      }
-      leaderboard.sort((a, b) => b.score - a.score);
-      localStorage.setItem("dinoLeaderboard", JSON.stringify(leaderboard.slice(0, 10)));
-      saveMsg.textContent = "Score saved!";
-      showLeaderboard();
-      playerNameInput.value = "";
-    }
-
-    submitScoreBtn.addEventListener('click', submitScore);
-
-    // Init
-    loadGame();
-    buildShop();
-    showLeaderboard();
-    updateScore();
-
   </script>
 </body>
 </html>
