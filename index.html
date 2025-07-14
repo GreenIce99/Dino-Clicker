@@ -262,3 +262,26 @@
   </script>
 </body>
 </html>
+// --- Fake leaderboard (in-memory only) ---
+let leaderboard = [];
+
+function submitScore() {
+  const name = document.getElementById('playerName').value.trim();
+  if (!name) {
+    alert('Please enter your dino name!');
+    return;
+  }
+  leaderboard.push({ name, score: bones });
+  leaderboard.sort((a, b) => b.score - a.score);
+  updateLeaderboard();
+}
+
+function updateLeaderboard() {
+  const list = document.getElementById('leaderboardList');
+  list.innerHTML = '';
+  leaderboard.slice(0, 10).forEach((entry, index) => {
+    const li = document.createElement('li');
+    li.textContent = `${index + 1}. ${entry.name} - ${formatNumber(entry.score)} bones`;
+    list.appendChild(li);
+  });
+}
