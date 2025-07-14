@@ -3,409 +3,47 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dino Clicker Deluxe - Endless Upgrades</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-<style>
-  body {
-    font-family: 'Press Start 2P', cursive;
-    background: #121212;
-    color: #eee;
-    text-align: center;
-    padding: 20px;
-    user-select: none;
-  }
-  button {
-    font-family: inherit;
-    padding: 10px 18px;
-    margin: 8px;
-    border-radius: 8px;
-    border: none;
-    background: #3bceac;
-    color: #000;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  button:hover {
-    background: #27a48b;
-  }
-  .upgrade, .achievement, .leaderboard, .event {
-    background: #222;
-    max-width: 420px;
-    margin: 15px auto;
-    padding: 15px;
-    border-radius: 12px;
-    text-align: left;
-  }
-  h1, h2, h3, h4 {
-    margin-bottom: 10px;
-  }
-  .bar {
-    height: 20px;
-    background: #444;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 10px;
-  }
-  .bar-inner {
-    height: 100%;
-    width: 0%;
-    background: limegreen;
-    transition: width 0.3s ease;
-  }
-  input[type=text] {
-    font-family: 'Press Start 2P', cursive;
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: none;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-  }
-  #soundToggle {
-    margin: 10px;
-  }
-  .hidden {
-    display: none;
-  }
-</style>
+<title>Dino Clicker BEAST MODE</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="stylesheet" href="styles.css" />
+<script defer src="app.js"></script>
 </head>
 <body>
+<header>
+  <h1>Dino Clicker BEAST MODE</h1>
+  <div id="logo">
+    <!-- simple dino svg -->
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="30" fill="#4CAF50"/>
+      <text x="32" y="38" font-family="Arial" font-size="20" fill="white" text-anchor="middle" font-weight="bold">DINO</text>
+    </svg>
+  </div>
+</header>
 
-<h1>DINO CLICKER DELUXE 🦖</h1>
-<h2>Bones: <span id="boneCount">0</span></h2>
-<button id="clickBtn">Click the Dino!</button>
+<main>
+  <section id="click-area">
+    <button id="dino-button">Tap Dino 🦖</button>
+    <p>Clicks: <span id="click-count">0</span></p>
+    <p>Clicks per tap: <span id="click-power">1</span></p>
+  </section>
 
-<div class="upgrade">
-  <h3>Upgrades</h3>
-  <div id="upgradeList"></div>
-</div>
+  <section id="upgrades">
+    <h2>Upgrades</h2>
+    <div id="upgrades-list"></div>
+  </section>
 
-<div class="event hidden" id="meteorEvent">
-  <h3>🌋 Meteor Event! Click to collect bonus bones!</h3>
-  <button id="collectMeteorBonusBtn">Collect 500 Bonus Bones</button>
-</div>
+  <section id="leaderboard">
+    <h2>Offline Leaderboard</h2>
+    <ol id="leaderboard-list"></ol>
+  </section>
 
-<div class="upgrade">
-  <h3>Evolution Progress</h3>
-  <div class="bar"><div id="evoBar" class="bar-inner"></div></div>
-</div>
+  <section id="save-controls">
+    <button id="reset-game">Reset Game</button>
+  </section>
+</main>
 
-<div class="achievement">
-  <h3>Achievements</h3>
-  <ul id="achievementList"></ul>
-</div>
-
-<div class="leaderboard">
-  <h3>Leaderboard</h3>
-  <input id="playerName" type="text" placeholder="Your Dino Name (max 15 chars)" maxlength="15" />
-  <button id="submitScoreBtn">Submit Score</button>
-  <h4>Top Scores (online)</h4>
-  <ol id="leaderboardList"></ol>
-  <p id="leaderboardStatus"></p>
-</div>
-
-<div>
-  <label>
-    <input type="checkbox" id="soundToggle" checked />
-    Sound & Music On
-  </label>
-</div>
-
-<script>
-// --- Game variables ---
-let bones = 0;
-let bonePerClick = 1;
-let autoClickers = 0;
-let isBoostActive = false;
-let armorLevel = 0;
-let eggLevel = 0;
-let evolutionLevel = 0;
-let meteorActive = false;
-let meteorTimeout = null;
-
-const upgradeTiers = [
-  [ // Tier 0
-    { id: 'autoClicker', name: 'Auto Clicker', baseCost: 50, costMultiplier: 1.3, effect: () => { autoClickers++; } },
-    { id: 'boost', name: '30s Boost x2', baseCost: 100, costMultiplier: 1.4, effect: () => { if(!isBoostActive) activateBoost(); else alert('Boost already active!'); } },
-  ],
-  [ // Tier 1
-    { id: 'armor', name: 'Dino Armor', baseCost: 200, costMultiplier: 1.5, effect: () => { armorLevel++; bonePerClick += 2; } },
-    { id: 'egg', name: 'Dino Egg', baseCost: 500, costMultiplier: 1.6, effect: () => { eggLevel++; bonePerClick += 5; } },
-  ],
-  [ // Tier 2
-    { id: 'fossil', name: 'Fossil Power', baseCost: 1000, costMultiplier: 1.7, effect: () => { bonePerClick += 10; } },
-    { id: 'meteor', name: 'Meteor Magic', baseCost: 3000, costMultiplier: 1.8, effect: () => { startMeteorEvent(); } },
-  ],
-  [ // Tier 3
-    { id: 'megaBoost', name: 'Mega Boost 60s x3', baseCost: 10000, costMultiplier: 2.0, effect: () => { if(!isBoostActive) activateMegaBoost(); else alert('Boost already active!'); } },
-    { id: 'claw', name: 'Sharp Dino Claws', baseCost: 15000, costMultiplier: 2.1, effect: () => { bonePerClick += 25; } },
-  ],
-  [ // Tier 4
-    { id: 'ancientFossil', name: 'Ancient Fossil', baseCost: 50000, costMultiplier: 2.3, effect: () => { bonePerClick += 50; } },
-    { id: 'dinoRoar', name: 'Dino Roar', baseCost: 100000, costMultiplier: 2.5, effect: () => { bones += 1000; updateDisplay(); alert("ROAR! Bonus 1000 bones!"); } },
-  ]
-  // You can add more tiers here!
-];
-
-let currentTier = 0;
-const purchasedUpgrades = new Set();
-
-// --- Sound ---
-const clickSound = new Audio('https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg');
-const boostSound = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
-const meteorSound = new Audio('https://actions.google.com/sounds/v1/ambiences/fireworks_explosion.ogg');
-const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/03/03/audio_c4a71cc57d.mp3?filename=80s-arcade-loop-11004.mp3');
-bgMusic.loop = true;
-bgMusic.volume = 0.15;
-
-function playSound(sound) {
-  if (document.getElementById('soundToggle').checked) {
-    sound.currentTime = 0;
-    sound.play();
-  }
-}
-
-// --- DOM Elements ---
-const boneCountEl = document.getElementById('boneCount');
-const clickBtn = document.getElementById('clickBtn');
-const upgradeListDiv = document.getElementById('upgradeList');
-const evoBar = document.getElementById('evoBar');
-const achievementList = document.getElementById('achievementList');
-const meteorEventDiv = document.getElementById('meteorEvent');
-const collectMeteorBtn = document.getElementById('collectMeteorBonusBtn');
-const playerNameInput = document.getElementById('playerName');
-const submitScoreBtn = document.getElementById('submitScoreBtn');
-const leaderboardList = document.getElementById('leaderboardList');
-const leaderboardStatus = document.getElementById('leaderboardStatus');
-const soundToggle = document.getElementById('soundToggle');
-
-// --- Cost calculation ---
-function getUpgradeCost(upgrade) {
-  return Math.floor(upgrade.baseCost * upgrade.costMultiplier);
-}
-
-// --- Render Upgrades ---
-function renderUpgrades() {
-  upgradeListDiv.innerHTML = '';
-  for(let tier = 0; tier <= currentTier; tier++) {
-    upgradeTiers[tier].forEach(upg => {
-      if (!purchasedUpgrades.has(upg.id)) {
-        const cost = getUpgradeCost(upg);
-        const btn = document.createElement('button');
-        btn.textContent = `${upg.name} (Cost: ${cost})`;
-        btn.onclick = () => buyUpgrade(upg);
-        upgradeListDiv.appendChild(btn);
-        upgradeListDiv.appendChild(document.createElement('br'));
-      }
-    });
-  }
-}
-
-// --- Buy Upgrade ---
-function buyUpgrade(upgrade) {
-  const cost = getUpgradeCost(upgrade);
-  if (bones >= cost) {
-    bones -= cost;
-    purchasedUpgrades.add(upgrade.id);
-    playSound(boostSound);
-    upgrade.effect();
-    updateDisplay();
-    checkTierUnlock();
-    renderUpgrades();
-  } else {
-    alert("Not enough bones!");
-  }
-}
-
-// --- Check if next tier unlocked ---
-function checkTierUnlock() {
-  const allBought = upgradeTiers[currentTier].every(upg => purchasedUpgrades.has(upg.id));
-  if (allBought && currentTier < upgradeTiers.length - 1) {
-    currentTier++;
-    alert("New upgrades unlocked!");
-  }
-}
-
-// --- Boost Activation ---
-function activateBoost() {
-  isBoostActive = true;
-  playSound(boostSound);
-  setTimeout(() => {
-    isBoostActive = false;
-    updateDisplay();
-  }, 30000);
-}
-
-function activateMegaBoost() {
-  isBoostActive = true;
-  playSound(boostSound);
-  setTimeout(() => {
-    isBoostActive = false;
-    updateDisplay();
-  }, 60000);
-}
-
-// --- Auto Clickers ---
-setInterval(() => {
-  bones += autoClickers * (isBoostActive ? 2 : 1);
-  updateEvolution();
-  updateDisplay();
-}, 1000);
-
-// --- Evolution ---
-function updateEvolution() {
-  evolutionLevel = Math.floor(bones / 1000);
-}
-
-// --- Achievements ---
-function updateAchievements() {
-  achievementList.innerHTML = '';
-  const achievements = [];
-
-  if (bones >= 100) achievements.push("🐣 Hatched 100 Bones!");
-  if (bones >= 1000) achievements.push("🦕 Evolved Once!");
-  if (bones >= 5000) achievements.push("🦖 Fossil Frenzy!");
-  if (autoClickers >= 5) achievements.push("🛠️ Auto Dino Master!");
-  if (armorLevel >= 3) achievements.push("🛡️ Armor Expert!");
-  if (eggLevel >= 2) achievements.push("🥚 Egg Collector!");
-  if (purchasedUpgrades.has('megaBoost')) achievements.push("⚡ Mega Boost Activated!");
-  if (purchasedUpgrades.has('dinoRoar')) achievements.push("🦖 Dino Roar Master!");
-
-  achievements.forEach(text => {
-    const li = document.createElement('li');
-    li.textContent = text;
-    achievementList.appendChild(li);
-  });
-}
-
-// --- Save/Load ---
-function saveGame() {
-  localStorage.setItem('dinoBones', bones);
-  localStorage.setItem('autoClickers', autoClickers);
-  localStorage.setItem('armorLevel', armorLevel);
-  localStorage.setItem('eggLevel', eggLevel);
-  localStorage.setItem('isBoostActive', isBoostActive);
-  localStorage.setItem('purchasedUpgrades', JSON.stringify(Array.from(purchasedUpgrades)));
-  localStorage.setItem('currentTier', currentTier);
-  localStorage.setItem('bonePerClick', bonePerClick);
-}
-
-function loadGame() {
-  bones = parseInt(localStorage.getItem('dinoBones')) || 0;
-  autoClickers = parseInt(localStorage.getItem('autoClickers')) || 0;
-  armorLevel = parseInt(localStorage.getItem('armorLevel')) || 0;
-  eggLevel = parseInt(localStorage.getItem('eggLevel')) || 0;
-  isBoostActive = localStorage.getItem('isBoostActive') === 'true';
-  bonePerClick = parseInt(localStorage.getItem('bonePerClick')) || 1;
-  currentTier = parseInt(localStorage.getItem('currentTier')) || 0;
-  const pu = JSON.parse(localStorage.getItem('purchasedUpgrades'));
-  if (pu && Array.isArray(pu)) {
-    purchasedUpgrades.clear();
-    pu.forEach(u => purchasedUpgrades.add(u));
-  }
-  updateDisplay();
-  renderUpgrades();
-}
-
-loadGame();
-
-// --- Update Display ---
-function updateDisplay() {
-  boneCountEl.textContent = bones;
-  evoBar.style.width = ((bones % 1000) / 10) + '%';
-  updateAchievements();
-  saveGame();
-}
-
-// --- Meteor Event ---
-function startMeteorEvent() {
-  if (meteorActive) return;
-  meteorActive = true;
-  meteorEventDiv.classList.remove('hidden');
-  playSound(meteorSound);
-  meteorTimeout = setTimeout(() => {
-    meteorActive = false;
-    meteorEventDiv.classList.add('hidden');
-  }, 20000);
-}
-
-collectMeteorBtn.addEventListener('click', () => {
-  if (!meteorActive) return;
-  bones += 500;
-  meteorActive = false;
-  meteorEventDiv.classList.add('hidden');
-  updateDisplay();
-});
-
-// Random Meteor event every 1-3 minutes (30% chance)
-setInterval(() => {
-  if (!meteorActive && Math.random() < 0.3) startMeteorEvent();
-}, 60000);
-
-// --- Click Dino ---
-clickBtn.addEventListener('click', () => {
-  bones += bonePerClick * (isBoostActive ? 2 : 1);
-  playSound(clickSound);
-  updateEvolution();
-  updateDisplay();
-});
-
-// --- Online Leaderboard (JsonBin.io Readonly demo) ---
-const JSONBIN_BIN_ID = "64b107eea4c1e82f1b6d6823"; // Replace if you want your own
-
-async function fetchLeaderboard() {
-  leaderboardStatus.textContent = 'Loading leaderboard...';
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`);
-    if (!res.ok) throw new Error('Failed to fetch leaderboard');
-    const data = await res.json();
-    const scores = data.record.scores || [];
-    scores.sort((a, b) => b.score - a.score);
-    renderLeaderboard(scores.slice(0,10));
-    leaderboardStatus.textContent = '';
-  } catch (e) {
-    leaderboardStatus.textContent = 'Failed to load leaderboard.';
-  }
-}
-
-function renderLeaderboard(scores) {
-  leaderboardList.innerHTML = '';
-  scores.forEach((entry, i) => {
-    const li = document.createElement('li');
-    li.textContent = `${i+1}. ${entry.name} - ${entry.score} bones`;
-    leaderboardList.appendChild(li);
-  });
-}
-
-submitScoreBtn.addEventListener('click', () => {
-  alert('Submitting scores requires API setup. Leaderboard is currently read-only demo.');
-});
-
-fetchLeaderboard();
-
-// --- Sound Control ---
-soundToggle.addEventListener('change', () => {
-  if (soundToggle.checked) {
-    bgMusic.play();
-  } else {
-    bgMusic.pause();
-  }
-});
-if(soundToggle.checked) bgMusic.play();
-
-// --- PWA Service Worker registration ---
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js').then(() => {
-      console.log('Service Worker Registered');
-    });
-  });
-}
-
-// --- Periodic display update ---
-setInterval(updateDisplay, 1000);
-
-</script>
-
+<footer>
+  <p>© Dino Clicker 2025 - Beast Mode</p>
+</footer>
 </body>
 </html>
