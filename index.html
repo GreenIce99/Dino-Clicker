@@ -1,288 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dino Clicker Deluxe</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#27ae60" />
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-    * { box-sizing: border-box; }
-    body {
-      font-family: 'Press Start 2P', cursive;
-      background: linear-gradient(to bottom, #2c3e50, #27ae60);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-    }
-    #clicker {
-      font-size: 4rem;
-      background: #1abc9c;
-      border: none;
-      border-radius: 50%;
-      width: 150px;
-      height: 150px;
-      cursor: pointer;
-      box-shadow: 0 0 20px #16a085;
-      transition: transform 0.1s;
-    }
-    #clicker:active {
-      transform: scale(0.95);
-    }
-    .stats, .upgrades, .achievements, .boosts {
-      margin-top: 20px;
-      max-width: 400px;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 15px;
-      border-radius: 10px;
-    }
-    button {
-      font-family: inherit;
-      margin-top: 10px;
-      padding: 10px;
-      font-size: 0.8rem;
-      border: none;
-      background: #2980b9;
-      color: #fff;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    button:disabled {
-      background: #555;
-      cursor: not-allowed;
-    }
-    .popup {
-      background: #e67e22;
-      color: #fff;
-      padding: 5px 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-      animation: fade 3s forwards;
-    }
-    @keyframes fade {
-      0% { opacity: 1; }
-      100% { opacity: 0; display: none; }
-    }
-    #evoBar {
-      width: 100%;
-      background: #444;
-      border-radius: 8px;
-      margin-top: 10px;
-      overflow: hidden;
-    }
-    #evoProgress {
-      height: 12px;
-      background: lime;
-      width: 0%;
-      transition: width 0.3s ease-in-out;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dino Clicker Deluxe</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<style>
+  body {
+    font-family: 'Press Start 2P', cursive;
+    background: #121212;
+    color: #eee;
+    text-align: center;
+    padding: 20px;
+    user-select: none;
+  }
+  button {
+    font-family: inherit;
+    padding: 10px 18px;
+    margin: 8px;
+    border-radius: 8px;
+    border: none;
+    background: #3bceac;
+    color: #000;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #27a48b;
+  }
+  .upgrade, .achievement, .leaderboard, .event {
+    background: #222;
+    max-width: 400px;
+    margin: 15px auto;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: left;
+  }
+  h1, h2, h3, h4 {
+    margin-bottom: 10px;
+  }
+  .bar {
+    height: 20px;
+    background: #444;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .bar-inner {
+    height: 100%;
+    width: 0%;
+    background: limegreen;
+    transition: width 0.3s ease;
+  }
+  input[type=text] {
+    font-family: 'Press Start 2P', cursive;
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+  #soundToggle {
+    margin: 10px;
+  }
+  .hidden {
+    display: none;
+  }
+</style>
 </head>
 <body>
-  <h1>Dino Clicker Deluxe 🦖</h1>
-  <audio id="bgMusic" loop src="https://cdn.pixabay.com/audio/2022/03/15/audio_3d4f051418.mp3"></audio>
-  <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_545a313343.mp3"></audio>
-  <button id="clicker">🦴</button>
-  <div class="stats">
-    <p id="bones">Bones: 0</p>
-    <p id="xp">XP: 0 | Level: 1</p>
-    <div id="evoBar"><div id="evoProgress"></div></div>
-    <p id="bpc">Bones/Click: 1</p>
-    <p id="totalClicks">Total Clicks: 0</p>
-  </div>
-  <div class="upgrades">
-    <h3>Upgrades</h3>
-    <button id="upgradeClick">Upgrade Claws (+1 BPC) - 20 Bones</button><br>
-    <button id="autoClicker">Hire Dino Worker (Auto +1/sec) - 100 Bones</button>
-  </div>
-  <div class="boosts">
-    <h3>Boosts</h3>
-    <button id="doubleBoost">2x Bones (30s)</button>
-    <p id="boostTimer"></p>
-    <button onclick="toggleMusic()">🎵 Toggle Music</button>
-  </div>
-  <div class="achievements">
-    <h3>Achievements</h3>
-    <div id="achievementList"></div>
-  </div>
-  <div id="popupArea"></div>
-  <script>
-    let bones = 0, xp = 0, level = 1, bonesPerClick = 1, totalClicks = 0;
-    let upgradeCost = 20, autoCost = 100;
-    let doubleBoost = false, boostCooldown = false;
-    let autoRate = 0, autoInterval;
 
-    const clicker = document.getElementById('clicker');
-    const bonesEl = document.getElementById('bones');
-    const xpEl = document.getElementById('xp');
-    const bpcEl = document.getElementById('bpc');
-    const clicksEl = document.getElementById('totalClicks');
-    const upgradeBtn = document.getElementById('upgradeClick');
-    const autoBtn = document.getElementById('autoClicker');
-    const boostBtn = document.getElementById('doubleBoost');
-    const boostTimer = document.getElementById('boostTimer');
-    const achievements = document.getElementById('achievementList');
-    const popupArea = document.getElementById('popupArea');
-    const music = document.getElementById('bgMusic');
-    const clickSound = document.getElementById('clickSound');
-    const evoProgress = document.getElementById('evoProgress');
+<h1>DINO CLICKER DELUXE 🦖</h1>
+<h2>Bones: <span id="boneCount">0</span></h2>
+<button id="clickBtn">Click the Dino!</button>
 
-    const achievementList = [
-      { id: 'click10', text: 'First 10 Clicks!', unlocked: false, condition: () => totalClicks >= 10 },
-      { id: 'bones100', text: '100 Bones Collected!', unlocked: false, condition: () => bones >= 100 },
-      { id: 'level5', text: 'Reached Level 5!', unlocked: false, condition: () => level >= 5 }
-    ];
+<div class="upgrade">
+  <h3>Upgrades</h3>
+  <button id="buyAutoClickerBtn">Auto Clicker (Cost: <span id="autoClickerCost">50</span>)</button><br/>
+  <button id="buyBoostBtn">30s 2x Boost (Cost: <span id="boostCost">100</span>)</button><br/>
+  <button id="buyArmorBtn">Dino Armor (Cost: <span id="armorCost">200</span>)</button><br/>
+  <button id="buyEggBtn">Dino Egg (Cost: <span id="eggCost">500</span>)</button>
+</div>
 
-    function updateDisplay() {
-      bonesEl.textContent = `Bones: ${bones}`;
-      xpEl.textContent = `XP: ${xp} | Level: ${level}`;
-      bpcEl.textContent = `Bones/Click: ${bonesPerClick}`;
-      clicksEl.textContent = `Total Clicks: ${totalClicks}`;
-      upgradeBtn.textContent = `Upgrade Claws (+1 BPC) - ${upgradeCost} Bones`;
-      autoBtn.textContent = `Hire Dino Worker (Auto +${autoRate + 1}/sec) - ${autoCost} Bones`;
-      upgradeBtn.disabled = bones < upgradeCost;
-      autoBtn.disabled = bones < autoCost;
-      evoProgress.style.width = `${(xp / (level * 10)) * 100}%`;
-    }
+<div class="event hidden" id="meteorEvent">
+  <h3>🌋 Meteor Event! Click to collect bonus bones!</h3>
+  <button id="collectMeteorBonusBtn">Collect 500 Bonus Bones</button>
+</div>
 
-    function showPopup(text) {
-      const div = document.createElement('div');
-      div.className = 'popup';
-      div.textContent = text;
-      popupArea.appendChild(div);
-      setTimeout(() => popupArea.removeChild(div), 3000);
-    }
+<div class="upgrade">
+  <h3>Evolution Progress</h3>
+  <div class="bar"><div id="evoBar" class="bar-inner"></div></div>
+</div>
 
-    function checkAchievements() {
-      achievementList.forEach(ach => {
-        if (!ach.unlocked && ach.condition()) {
-          ach.unlocked = true;
-          const p = document.createElement('p');
-          p.textContent = ach.text;
-          achievements.appendChild(p);
-          showPopup(`🏆 Achievement: ${ach.text}`);
-        }
-      });
-    }
+<div class="achievement">
+  <h3>Achievements</h3>
+  <ul id="achievementList"></ul>
+</div>
 
-    function gainXP(amount) {
-      xp += amount;
-      if (xp >= level * 10) {
-        xp = 0;
-        level++;
-        bonesPerClick++;
-        showPopup(`🦖 Evolved to Level ${level}!`);
-      }
-    }
+<div class="leaderboard">
+  <h3>Leaderboard</h3>
+  <input id="playerName" type="text" placeholder="Your Dino Name (max 15 chars)" maxlength="15" />
+  <button id="submitScoreBtn">Submit Score</button>
+  <h4>Top Scores (online)</h4>
+  <ol id="leaderboardList"></ol>
+  <p id="leaderboardStatus"></p>
+</div>
 
-    function randomEvent() {
-      if (Math.random() < 0.05) {
-        const bonus = Math.floor(Math.random() * 50 + 25);
-        bones += bonus;
-        showPopup(`🌠 Meteor Shower! +${bonus} Bones`);
-      }
-    }
+<div>
+  <label>
+    <input type="checkbox" id="soundToggle" checked />
+    Sound & Music On
+  </label>
+</div>
 
-    clicker.addEventListener('click', () => {
-      const earned = bonesPerClick * (doubleBoost ? 2 : 1);
-      bones += earned;
-      totalClicks++;
-      gainXP(1);
-      updateDisplay();
-      checkAchievements();
-      randomEvent();
-      clickSound.play();
-    });
+<script>
+// --- Game variables ---
+let bones = 0;
+let bonePerClick = 1;
+let autoClickers = 0;
+let isBoostActive = false;
+let armorLevel = 0;
+let eggLevel = 0;
+let evolutionLevel = 0;
+let meteorActive = false;
+let meteorTimeout = null;
 
-    upgradeBtn.addEventListener('click', () => {
-      if (bones >= upgradeCost) {
-        bones -= upgradeCost;
-        bonesPerClick++;
-        upgradeCost = Math.floor(upgradeCost * 1.5);
-        updateDisplay();
-      }
-    });
+// --- Sound ---
+const clickSound = new Audio('https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg');
+const boostSound = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
+const meteorSound = new Audio('https://actions.google.com/sounds/v1/ambiences/fireworks_explosion.ogg');
+const bgMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/03/03/audio_c4a71cc57d.mp3?filename=80s-arcade-loop-11004.mp3');
+bgMusic.loop = true;
+bgMusic.volume = 0.15;
 
-    autoBtn.addEventListener('click', () => {
-      if (bones >= autoCost) {
-        bones -= autoCost;
-        autoRate++;
-        autoCost = Math.floor(autoCost * 1.75);
-        clearInterval(autoInterval);
-        autoInterval = setInterval(() => {
-          bones += autoRate * (doubleBoost ? 2 : 1);
-          gainXP(autoRate);
-          updateDisplay();
-          checkAchievements();
-        }, 1000);
-        updateDisplay();
-      }
-    });
-
-    boostBtn.addEventListener('click', () => {
-      if (boostCooldown) return;
-      doubleBoost = true;
-      boostCooldown = true;
-      boostBtn.disabled = true;
-      let time = 30;
-      boostTimer.textContent = `Boost active: ${time}s left`;
-      const interval = setInterval(() => {
-        time--;
-        boostTimer.textContent = `Boost active: ${time}s left`;
-        if (time <= 0) {
-          clearInterval(interval);
-          doubleBoost = false;
-          boostTimer.textContent = '';
-          setTimeout(() => {
-            boostCooldown = false;
-            boostBtn.disabled = false;
-          }, 30000);
-        }
-      }, 1000);
-    });
-
-    function toggleMusic() {
-      if (music.paused) music.play();
-      else music.pause();
-    }
-
-    window.addEventListener('load', () => {
-      updateDisplay();
-      music.volume = 0.3;
-      music.play().catch(() => {}); // Autoplay might be blocked
-    });
-  </script>
-</body>
-</html>
-
-// --- Fake leaderboard (in-memory only) ---
-let leaderboard = [];
-
-function submitScore() {
-  const name = document.getElementById('playerName').value.trim();
-  if (!name) {
-    alert('Please enter your dino name!');
-    return;
+function playSound(sound) {
+  if (document.getElementById('soundToggle').checked) {
+    sound.currentTime = 0;
+    sound.play();
   }
-  leaderboard.push({ name, score: bones });
-  leaderboard.sort((a, b) => b.score - a.score);
-  updateLeaderboard();
 }
 
-function updateLeaderboard() {
-  const list = document.getElementById('leaderboardList');
+// --- DOM Elements ---
+const boneCountEl = document.getElementById('boneCount');
+const clickBtn = document.getElementById('clickBtn');
+const autoClickerBtn = document.getElementById('buyAutoClickerBtn');
+const boostBtn = document.getElementById('buyBoostBtn');
+const armorBtn = document.getElementById('buyArmorBtn');
+const eggBtn = document.getElementById('buyEggBtn');
+const evoBar = document.getElementById('evoBar');
+const achievementList = document.getElementById('achievementList');
+const meteorEventDiv = document.getElementById('meteorEvent');
+const collectMeteorBtn = document.getElementById('collectMeteorBonusBtn');
+const playerNameInput = document.getElementById('playerName');
+const submitScoreBtn = document.getElementById('submitScoreBtn');
+const leaderboardList = document.getElementById('leaderboardList');
+const leaderboardStatus = document.getElementById('leaderboardStatus');
+const soundToggle = document.getElementById('soundToggle');
+
+// --- Costs ---
+function getCost(type) {
+  if (type === 'autoClicker') return 50 + autoClickers * 25;
+  if (type === 'boost') return 100;
+  if (type === 'armor') return 200 + armorLevel * 150;
+  if (type === 'egg') return 500 + eggLevel * 500;
+  return 0;
+}
+
+// --- Update Display ---
+function updateDisplay() {
+  boneCountEl.textContent = bones;
+  autoClickerBtn.querySelector('span').textContent = getCost('autoClicker');
+  boostBtn.querySelector('span').textContent = getCost('boost');
+  armorBtn.querySelector('span').textContent = getCost('armor');
+  eggBtn.querySelector('span').textContent = getCost('egg');
+  evoBar.style.width = ((bones % 1000) / 10) + '%';
+  updateAchievements();
+  saveGame();
+}
+
+// --- Click Dino ---
+clickBtn.addEventListener('click', () => {
+  bones += bonePerClick * (isBoostActive ? 2 : 1);
+  playSound(clickSound);
+  updateEvolution();
+  updateDisplay();
+});
+
+// --- Buy Upgrades ---
+autoClickerBtn.addEventListener('click', () => buyUpgrade('autoClicker'));
+boostBtn.addEventListener('click', () => buyUpgrade('boost'));
+armorBtn.addEventListener('click', () => buyUpgrade('armor'));
+eggBtn.addEventListener('click', () => buyUpgrade('egg'));
+
+function buyUpgrade(type) {
+  const cost = getCost(type);
+  if (bones >= cost) {
+    bones -= cost;
+    playSound(boostSound);
+    if (type === 'autoClicker') autoClickers++;
+    else if (type === 'boost' && !isBoostActive) activateBoost();
+    else if (type === 'armor') {
+      armorLevel++;
+      bonePerClick += 1; // armor adds extra bones per click
+    } else if (type === 'egg') {
+      eggLevel++;
+      bonePerClick += 3; // egg adds bigger bonus per click
+    }
+    updateDisplay();
+  } else alert('Not enough bones!');
+}
+
+// --- Boost Activation ---
+function activateBoost() {
+  isBoostActive = true;
+  setTimeout(() => {
+    isBoostActive = false;
+    updateDisplay();
+  }, 30000);
+}
+
+// --- Auto Clickers ---
+setInterval(() => {
+  bones += autoClickers * (isBoostActive ? 2 : 1);
+  updateEvolution();
+  updateDisplay();
+}, 1000);
+
+// --- Evolution ---
+function updateEvolution() {
+  evolutionLevel = Math.floor(bones / 1000);
+}
+
+// --- Achievements ---
+function updateAchievements() {
+  const list = achievementList;
   list.innerHTML = '';
-  leaderboard.slice(0, 10).forEach((entry, index) => {
+  let newAchievements = [];
+  if (bones >= 100) newAchievements.push("🐣 Hatched 100 Bones!");
+  if (bones >= 1000) newAchievements.push("🦕 Evolved Once!");
+  if (bones >= 5000) newAchievements.push("🦖 Fossil Frenzy!");
+  if (autoClickers >= 5) newAchievements.push("🛠️ Auto Dino Master!");
+  if (armorLevel >= 3) newAchievements.push("🛡️ Armor Expert!");
+  if (eggLevel >= 2) newAchievements.push("🥚 Egg Collector!");
+  newAchievements.forEach(a => {
     const li = document.createElement('li');
-    li.textContent = `${index + 1}. ${entry.name} - ${formatNumber(entry.score)} bones`;
+    li.textContent = a;
     list.appendChild(li);
   });
 }
+
+// --- Save/Load ---
+function saveGame() {
+  localStorage.setItem('dinoBones', bones);
+  localStorage.setItem('autoClickers', autoClickers);
+  localStorage.setItem('armorLevel', armorLevel);
+  localStorage.setItem('eggLevel', eggLevel);
+  localStorage.setItem('isBoostActive', isBoostActive);
+}
+
+function loadGame() {
+  bones = parseInt(localStorage.getItem('dinoBones')) || 0;
+  autoClickers = parseInt(localStorage.getItem('autoClickers')) || 0;
+  armorLevel = parseInt(localStorage.getItem('armorLevel')) || 0;
+  eggLevel = parseInt(localStorage.getItem('eggLevel')) || 0;
+  isBoostActive = localStorage.getItem('isBoostActive') === 'true';
+  updateDisplay();
+}
+
+loadGame();
+
+// --- Meteor Event ---
+function startMeteorEvent() {
+  if (meteorActive) return;
+  meteorActive = true;
+  meteorEventDiv.classList.remove('hidden');
+  playSound(meteorSound);
+  meteorTimeout = setTimeout(() => {
+    meteorActive = false;
+    meteorEventDiv.classList.add('hidden');
+  }, 20000);
+}
+
+collectMeteorBtn.addEventListener('click', () => {
+  if (!meteorActive) return;
+  bones += 500;
+  meteorActive = false;
+  meteorEventDiv.classList.add('hidden');
+  updateDisplay();
+});
+
+// Start meteor events randomly every 1-3 minutes
+setInterval(() => {
+  if (!meteorActive) {
+    if (Math.random() < 0.3) startMeteorEvent();
+  }
+}, 60000);
+
+// --- Online Leaderboard using JsonBin.io ---
+const JSONBIN_BIN_ID = "64b107eea4c1e82f1b6d6823"; // Replace with your own bin ID if needed
+
+async function fetchLeaderboard() {
+  leaderboardStatus.textContent = 'Loading leaderboard...';
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`);
+    if (!res.ok) throw new Error('Failed to fetch leaderboard');
+    const data = await res.json();
+    const scores = data.record.scores || [];
+    scores.sort((a, b) => b.score - a.score);
+    renderLeaderboard(scores.slice(0,10));
+    leaderboardStatus.textContent = '';
+  } catch (e) {
+    leaderboardStatus.textContent = 'Failed to load leaderboard.';
+  }
+}
+
+function renderLeaderboard(scores) {
+  leaderboardList.innerHTML = '';
+  scores.forEach((entry, i) => {
+    const li = document.createElement('li');
+    li.textContent = `${i+1}. ${entry.name} - ${entry.score} bones`;
+    leaderboardList.appendChild(li);
+  });
+}
+
+async function submitScore() {
+  const name = playerNameInput.value.trim().substring(0, 15);
+  if (!name) {
+    alert('Please enter your Dino Name!');
+    return;
+  }
+  leaderboardStatus.textContent = 'Submitting score...';
+  try {
+    // Get existing data
+    const getRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`);
+    if (!getRes.ok) throw new Error('Failed to fetch leaderboard');
+    const data = await getRes.json();
+    const scores = data.record.scores || [];
+    // Add new score
+    scores.push({name, score: bones});
+    // Sort & keep top 20
+    scores.sort((a, b) => b.score - a.score);
+    const newScores = scores.slice(0, 20);
+    alert('Submitting scores requires API key setup on JsonBin — read-only leaderboard active for now.');
+    leaderboardStatus.textContent = 'Leaderboard is read-only (demo).';
+    renderLeaderboard(newScores);
+  } catch (e) {
+    leaderboardStatus.textContent = 'Failed to submit score.';
+  }
+}
+
+submitScoreBtn.addEventListener('click', submitScore);
+
+// --- Sound Control ---
+soundToggle.addEventListener('change', () => {
+  if (soundToggle.checked) {
+    bgMusic.play();
+  } else {
+    bgMusic.pause();
+  }
+});
+
+// Start background music if toggled on
+if(soundToggle.checked) bgMusic.play();
+
+// --- PWA Service Worker registration ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').then(() => {
+      console.log('Service Worker Registered');
+    });
+  });
+}
+
+// Periodic display update
+setInterval(updateDisplay, 1000);
+
+// Load leaderboard on start
+fetchLeaderboard();
+
+</script>
+
+</body>
+</html>
