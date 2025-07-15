@@ -1,14 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dino Clicker BEAST MODE Phase 2</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dino Clicker BEAST MODE</title>
+<link rel="manifest" href="manifest.json" />
+<style>
+  /* Your CSS here or link external css/styles.css */
+  body {
+    font-family: sans-serif;
+    background-color: #e2f7d4;
+    color: #2e7d32;
+    text-align: center;
+    margin: 0;
+    padding: 1rem;
+  }
+  button {
+    padding: 0.5rem 1rem;
+    margin: 0.3rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #81c784;
+    color: #fff;
+  }
+  .dark-mode {
+    background-color: #121212;
+    color: #e2f7d4;
+  }
+  .dark-mode button {
+    background: #388e3c;
+  }
+  label {
+    display: block;
+    margin-top: 1rem;
+  }
+  #leaderboard-list {
+    list-style: none;
+    padding: 0;
+    max-width: 300px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  #leaderboard-list li {
+    padding: 0.3rem 0;
+    border-bottom: 1px solid #4caf50;
+  }
+  #pet-section p {
+    font-weight: bold;
+    margin: 1rem 0;
+  }
+  #boss-container {
+    margin: 1rem 0;
+  }
+  #boss-message {
+    font-weight: bold;
+    color: #d32f2f;
+    margin-top: 0.5rem;
+  }
+  #pet-animation {
+    font-size: 3rem;
+    transition: transform 0.3s ease;
+    user-select: none;
+  }
+  #settings-menu {
+    margin-top: 1rem;
+    text-align: left;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #4caf50;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #c8e6c9;
+  }
+  @keyframes sparkle {
+    0% {opacity: 1; transform: translateY(0);}
+    100% {opacity: 0; transform: translateY(-30px);}
+  }
+  .sparkle {
+    position: absolute;
+    font-size: 1.5rem;
+    animation: sparkle 1s forwards;
+  }
+</style>
 </head>
 <body>
 <header>
-  <h1>Dino Clicker BEAST MODE Phase 2</h1>
+  <h1>Dino Clicker BEAST MODE</h1>
 </header>
 
 <main>
@@ -31,9 +111,14 @@
 
     <label><input type="checkbox" id="dark-mode-toggle"> 🌙 Dark Mode</label>
 
+    <div id="settings-menu">
+      <h3>Settings</h3>
+      <label><input type="checkbox" id="music-toggle" checked> Background Music</label>
+      <label><input type="checkbox" id="sound-toggle" checked> Sound Effects</label>
+    </div>
+
     <hr/>
 
-    <!-- Leaderboard Section -->
     <section id="leaderboard-section">
       <h2>Global Leaderboard</h2>
       <input type="text" id="player-name" placeholder="Enter your name" maxlength="12" />
@@ -43,16 +128,18 @@
 
     <hr/>
 
-    <!-- Pets Section -->
     <section id="pet-section">
       <h2>Pet Dino</h2>
       <p id="pet-status">No pet yet. Keep clicking to hatch!</p>
+      <div id="pet-animation"></div>
+      <p>
+        <label>Pet Name: <input type="text" id="pet-name-input" placeholder="Name your pet" /></label>
+      </p>
       <button id="collect-pet-bonus" disabled>Collect Pet Bonus</button>
     </section>
 
     <hr/>
 
-    <!-- Boss Battle Section -->
     <section id="boss-section">
       <h2>Boss Battle</h2>
       <div id="boss-container" style="display:none;">
@@ -65,10 +152,18 @@
   </section>
 </main>
 
-<script src="storage.js"></script>
-<script src="pets.js"></script>
-<script src="boss.js"></script>
-<script src="leaderboard.js"></script>
-<script src="app.js"></script>
+<audio id="bg-music" loop>
+  <source src="audio/music.mp3" type="audio/mpeg" />
+</audio>
+
+<audio id="sound-click" src="audio/click.mp3"></audio>
+<audio id="sound-upgrade" src="audio/upgrade.mp3"></audio>
+<audio id="sound-achievement" src="audio/achievement.mp3"></audio>
+<audio id="sound-pet" src="audio/pet.mp3"></audio>
+<audio id="sound-boss-hit" src="audio/boss-hit.mp3"></audio>
+<audio id="sound-boss-defeat" src="audio/boss-defeat.mp3"></audio>
+
+<script src="js/app.js"></script>
+
 </body>
 </html>
