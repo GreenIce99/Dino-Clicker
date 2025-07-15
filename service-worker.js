@@ -5,8 +5,7 @@ const assetsToCache = [
   './manifest.json',
   './js/app.js',
   './icon-192.png',
-  './icon-512.png',
-  // Add audio files here if you want to cache them
+  './icon-512.png'
 ];
 
 self.addEventListener('install', evt => {
