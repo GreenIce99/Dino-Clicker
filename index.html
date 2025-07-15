@@ -1,49 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dino Clicker BEAST MODE</title>
-<link rel="manifest" href="manifest.json" />
-<link rel="stylesheet" href="styles.css" />
-<script defer src="app.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dino Clicker BEAST MODE Phase 2</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <header>
-  <h1>Dino Clicker BEAST MODE</h1>
-  <div id="logo">
-    <!-- simple dino svg -->
-    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="32" cy="32" r="30" fill="#4CAF50"/>
-      <text x="32" y="38" font-family="Arial" font-size="20" fill="white" text-anchor="middle" font-weight="bold">DINO</text>
-    </svg>
-  </div>
+  <h1>Dino Clicker BEAST MODE Phase 2</h1>
 </header>
 
 <main>
-  <section id="click-area">
-    <button id="dino-button">Tap Dino 🦖</button>
+  <section id="slot-select">
+    <h2>Choose Save Slot</h2>
+    <div id="slots">
+      <button onclick="selectSlot(0)">Slot 1</button>
+      <button onclick="selectSlot(1)">Slot 2</button>
+      <button onclick="selectSlot(2)">Slot 3</button>
+    </div>
+  </section>
+
+  <section id="game" style="display: none;">
+    <button id="dino-button">🦖 Tap Dino</button>
     <p>Clicks: <span id="click-count">0</span></p>
-    <p>Clicks per tap: <span id="click-power">1</span></p>
-  </section>
+    <p>Power: <span id="click-power">1</span></p>
+    <button onclick="saveGame()">💾 Save</button>
+    <button onclick="resetSlot()">🗑️ Reset Slot</button>
+    <br/><br/>
 
-  <section id="upgrades">
-    <h2>Upgrades</h2>
-    <div id="upgrades-list"></div>
-  </section>
+    <label><input type="checkbox" id="dark-mode-toggle"> 🌙 Dark Mode</label>
 
-  <section id="leaderboard">
-    <h2>Offline Leaderboard</h2>
-    <ol id="leaderboard-list"></ol>
-  </section>
+    <hr/>
 
-  <section id="save-controls">
-    <button id="reset-game">Reset Game</button>
+    <!-- Leaderboard Section -->
+    <section id="leaderboard-section">
+      <h2>Global Leaderboard</h2>
+      <input type="text" id="player-name" placeholder="Enter your name" maxlength="12" />
+      <button id="submit-score-btn">Submit Score</button>
+      <ul id="leaderboard-list"></ul>
+    </section>
+
+    <hr/>
+
+    <!-- Pets Section -->
+    <section id="pet-section">
+      <h2>Pet Dino</h2>
+      <p id="pet-status">No pet yet. Keep clicking to hatch!</p>
+      <button id="collect-pet-bonus" disabled>Collect Pet Bonus</button>
+    </section>
+
+    <hr/>
+
+    <!-- Boss Battle Section -->
+    <section id="boss-section">
+      <h2>Boss Battle</h2>
+      <div id="boss-container" style="display:none;">
+        <p id="boss-health">Boss Health: 100</p>
+        <button id="attack-boss-btn">Attack Boss</button>
+        <p id="boss-timer">Time Left: 30s</p>
+      </div>
+      <p id="boss-message"></p>
+    </section>
   </section>
 </main>
 
-<footer>
-  <p>© Dino Clicker 2025 - Beast Mode</p>
-</footer>
+<script src="storage.js"></script>
+<script src="pets.js"></script>
+<script src="boss.js"></script>
+<script src="leaderboard.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
