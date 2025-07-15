@@ -1,167 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dino Clicker BEAST MODE</title>
-<link rel="manifest" href="manifest.json" />
-<style>
-  /* Your CSS here or link external css/styles.css */
-  body {
-    font-family: sans-serif;
-    background-color: #e2f7d4;
-    color: #2e7d32;
-    text-align: center;
-    margin: 0;
-    padding: 1rem;
-  }
-  button {
-    padding: 0.5rem 1rem;
-    margin: 0.3rem;
-    font-size: 1rem;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    background: #81c784;
-    color: #fff;
-  }
-  .dark-mode {
-    background-color: #121212;
-    color: #e2f7d4;
-  }
-  .dark-mode button {
-    background: #388e3c;
-  }
-  label {
-    display: block;
-    margin-top: 1rem;
-  }
-  #leaderboard-list {
-    list-style: none;
-    padding: 0;
-    max-width: 300px;
-    margin: 0 auto;
-    text-align: left;
-  }
-  #leaderboard-list li {
-    padding: 0.3rem 0;
-    border-bottom: 1px solid #4caf50;
-  }
-  #pet-section p {
-    font-weight: bold;
-    margin: 1rem 0;
-  }
-  #boss-container {
-    margin: 1rem 0;
-  }
-  #boss-message {
-    font-weight: bold;
-    color: #d32f2f;
-    margin-top: 0.5rem;
-  }
-  #pet-animation {
-    font-size: 3rem;
-    transition: transform 0.3s ease;
-    user-select: none;
-  }
-  #settings-menu {
-    margin-top: 1rem;
-    text-align: left;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid #4caf50;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #c8e6c9;
-  }
-  @keyframes sparkle {
-    0% {opacity: 1; transform: translateY(0);}
-    100% {opacity: 0; transform: translateY(-30px);}
-  }
-  .sparkle {
-    position: absolute;
-    font-size: 1.5rem;
-    animation: sparkle 1s forwards;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dino Clicker BEAST MODE</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 20px;
+      background: #e2f7d4;
+      color: #2e7d32;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark-mode {
+      background: #121212;
+      color: #a5d6a7;
+    }
+    #slot-select, #game {
+      max-width: 600px;
+      margin: auto;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    #dino-button {
+      font-size: 3em;
+      padding: 30px;
+      border-radius: 15px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      user-select: none;
+    }
+    #pet-animation {
+      font-size: 3em;
+      margin: 10px 0;
+      display: inline-block;
+      user-select: none;
+    }
+    #boss-container {
+      border: 3px solid #d32f2f;
+      padding: 10px;
+      margin-top: 20px;
+      display: none;
+      background: #ffebee;
+      border-radius: 10px;
+      user-select: none;
+    }
+    .sparkle {
+      position: absolute;
+      font-size: 2em;
+      animation: sparkle-fade 1s forwards;
+      pointer-events: none;
+      user-select: none;
+    }
+    @keyframes sparkle-fade {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+  </style>
 </head>
 <body>
-<header>
+
+<div id="slot-select">
+  <h2>Select Save Slot</h2>
+  <button onclick="selectSlot(0)">Slot 1</button>
+  <button onclick="selectSlot(1)">Slot 2</button>
+  <button onclick="selectSlot(2)">Slot 3</button>
+</div>
+
+<div id="game" style="display:none;">
   <h1>Dino Clicker BEAST MODE</h1>
-</header>
+  
+  <div>
+    <button id="dino-button">🦖</button>
+  </div>
+  <p>Clicks: <span id="click-count">0</span></p>
+  <p>Click Power: <span id="click-power">1</span></p>
 
-<main>
-  <section id="slot-select">
-    <h2>Choose Save Slot</h2>
-    <div id="slots">
-      <button onclick="selectSlot(0)">Slot 1</button>
-      <button onclick="selectSlot(1)">Slot 2</button>
-      <button onclick="selectSlot(2)">Slot 3</button>
-    </div>
-  </section>
+  <label>
+    <input type="checkbox" id="dark-mode-toggle" /> Dark Mode
+  </label>
+  <label>
+    <input type="checkbox" id="music-toggle" checked /> Music
+  </label>
+  <label>
+    <input type="checkbox" id="sound-toggle" checked /> Sound Effects
+  </label>
+  <br />
 
-  <section id="game" style="display: none;">
-    <button id="dino-button">🦖 Tap Dino</button>
-    <p>Clicks: <span id="click-count">0</span></p>
-    <p>Power: <span id="click-power">1</span></p>
-    <button onclick="saveGame()">💾 Save</button>
-    <button onclick="resetSlot()">🗑️ Reset Slot</button>
-    <br/><br/>
+  <button onclick="saveGame()">Save Game</button>
+  <button onclick="resetSlot()">Reset Slot</button>
 
-    <label><input type="checkbox" id="dark-mode-toggle"> 🌙 Dark Mode</label>
+  <h3>Pet</h3>
+  <div id="pet-animation"></div>
+  <p id="pet-status">No pet yet. Keep clicking to hatch!</p>
+  <input id="pet-name-input" placeholder="Name your pet" maxlength="12" />
+  <button id="collect-pet-bonus" disabled>Collect Pet Bonus</button>
 
-    <div id="settings-menu">
-      <h3>Settings</h3>
-      <label><input type="checkbox" id="music-toggle" checked> Background Music</label>
-      <label><input type="checkbox" id="sound-toggle" checked> Sound Effects</label>
-    </div>
+  <h3>Boss Battle</h3>
+  <div id="boss-container">
+    <p id="boss-health"></p>
+    <p id="boss-timer"></p>
+    <p id="boss-message"></p>
+    <button id="attack-boss-btn">Attack Boss</button>
+  </div>
 
-    <hr/>
-
-    <section id="leaderboard-section">
-      <h2>Global Leaderboard</h2>
-      <input type="text" id="player-name" placeholder="Enter your name" maxlength="12" />
-      <button id="submit-score-btn">Submit Score</button>
-      <ul id="leaderboard-list"></ul>
-    </section>
-
-    <hr/>
-
-    <section id="pet-section">
-      <h2>Pet Dino</h2>
-      <p id="pet-status">No pet yet. Keep clicking to hatch!</p>
-      <div id="pet-animation"></div>
-      <p>
-        <label>Pet Name: <input type="text" id="pet-name-input" placeholder="Name your pet" /></label>
-      </p>
-      <button id="collect-pet-bonus" disabled>Collect Pet Bonus</button>
-    </section>
-
-    <hr/>
-
-    <section id="boss-section">
-      <h2>Boss Battle</h2>
-      <div id="boss-container" style="display:none;">
-        <p id="boss-health">Boss Health: 100</p>
-        <button id="attack-boss-btn">Attack Boss</button>
-        <p id="boss-timer">Time Left: 30s</p>
-      </div>
-      <p id="boss-message"></p>
-    </section>
-  </section>
-</main>
-
-<audio id="bg-music" loop>
-  <source src="audio/music.mp3" type="audio/mpeg" />
-</audio>
-
-<audio id="sound-click" src="audio/click.mp3"></audio>
-<audio id="sound-upgrade" src="audio/upgrade.mp3"></audio>
-<audio id="sound-achievement" src="audio/achievement.mp3"></audio>
-<audio id="sound-pet" src="audio/pet.mp3"></audio>
-<audio id="sound-boss-hit" src="audio/boss-hit.mp3"></audio>
-<audio id="sound-boss-defeat" src="audio/boss-defeat.mp3"></audio>
+  <h3>Leaderboard</h3>
+  <input id="player-name" placeholder="Your name" maxlength="12" />
+  <button id="submit-score-btn">Submit Score</button>
+  <ol id="leaderboard-list"></ol>
+</div>
 
 <script src="js/app.js"></script>
 
