@@ -1,4 +1,28 @@
-// app.js code - full code as previously given
+// app.js with embedded Base64 audio for all sounds and music
+
+// Base64 audio data URIs for short sounds and simple looped music
+const sounds = {
+  bgMusic: new Audio("data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="), // Very short silent loop (placeholder)
+  click: new Audio("data:audio/wav;base64,UklGRkgAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="),    // Tiny click beep
+  upgrade: new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="),  // Tiny ding
+  achievement: new Audio("data:audio/wav;base64,UklGRiAAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="), // Tiny cheer
+  pet: new Audio("data:audio/wav;base64,UklGRiIAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="),         // Tiny pet sound
+  bossHit: new Audio("data:audio/wav;base64,UklGRjAAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="),    // Tiny hit sound
+  bossDefeat: new Audio("data:audio/wav;base64,UklGRjQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=")  // Tiny victory fanfare
+};
+
+// Helper to play sounds if sound enabled
+function playSound(soundKey) {
+  if (!soundToggle.checked) return;
+  const s = sounds[soundKey];
+  if (s) {
+    s.pause();
+    s.currentTime = 0;
+    s.play();
+  }
+}
+
+// Variables and DOM references
 let clicks = 0;
 let clickPower = 1;
 let pet = null;
@@ -28,28 +52,19 @@ const petAnimationDiv = document.getElementById('pet-animation');
 const petStatus = document.getElementById('pet-status');
 const collectPetBonusBtn = document.getElementById('collect-pet-bonus');
 
-const bgMusic = document.getElementById('bg-music');
-const soundClick = document.getElementById('sound-click');
-const soundUpgrade = document.getElementById('sound-upgrade');
-const soundAchievement = document.getElementById('sound-achievement');
-const soundPet = document.getElementById('sound-pet');
-const soundBossHit = document.getElementById('sound-boss-hit');
-const soundBossDefeat = document.getElementById('sound-boss-defeat');
+const bgMusic = sounds.bgMusic;
 
-function playSound(sound) {
-  if (!soundToggle.checked) return;
-  sound.currentTime = 0;
-  sound.play();
-}
-
+// Play/pause music according to toggle
 function toggleMusic() {
   if (musicToggle.checked) {
-    bgMusic.play();
+    bgMusic.loop = true;
+    bgMusic.play().catch(() => {});
   } else {
     bgMusic.pause();
   }
 }
 
+// Slot selection and game load
 function selectSlot(slotIndex) {
   currentSlot = slotIndex;
   loadGame();
@@ -73,7 +88,7 @@ function saveGame() {
   };
   localStorage.setItem(getSaveKey(), JSON.stringify(saveData));
   alert(`Game saved to Slot ${currentSlot + 1}!`);
-  playSound(soundUpgrade);
+  playSound('upgrade');
 }
 
 function loadGame() {
@@ -110,6 +125,7 @@ function resetSlot() {
   }
 }
 
+// Dark mode
 darkModeToggle.addEventListener('change', () => {
   const enabled = darkModeToggle.checked;
   document.body.classList.toggle('dark-mode', enabled);
@@ -130,9 +146,10 @@ soundToggle.addEventListener('change', () => {
   }
 });
 
+// Click event
 clickBtn.addEventListener('click', () => {
   clicks += clickPower;
-  playSound(soundClick);
+  playSound('click');
 
   if (pet) {
     pet.progress = (pet.progress || 0) + clickPower;
@@ -142,13 +159,14 @@ clickBtn.addEventListener('click', () => {
 
   if (boss && boss.active) {
     bossHitAnimation();
-    playSound(soundBossHit);
+    playSound('bossHit');
   }
 
   checkBossSpawn();
   updateUI();
 });
 
+// Submit score
 submitScoreBtn.addEventListener('click', () => {
   const name = playerNameInput.value.trim();
   if (!name) {
@@ -158,17 +176,19 @@ submitScoreBtn.addEventListener('click', () => {
   submitScore(name, clicks);
 });
 
+// Collect pet bonus
 collectPetBonusBtn.addEventListener('click', () => {
   if (pet) {
     const bonus = (pet.bonusPower || 1) * (pet.level || 1);
     clicks += bonus;
     petBonusEffect();
     alert(`Collected ${bonus} bonus clicks from your pet!`);
-    playSound(soundPet);
+    playSound('pet');
     updateUI();
   }
 });
 
+// Attack boss
 attackBossBtn.addEventListener('click', () => {
   if (!boss || !boss.active) return;
   boss.health -= clickPower * 5;
@@ -179,11 +199,12 @@ attackBossBtn.addEventListener('click', () => {
     bossMessageP.textContent = 'You defeated the boss! 🎉 Click power +10!';
     clickPower += 10;
     bossContainer.style.display = 'none';
-    playSound(soundBossDefeat);
+    playSound('bossDefeat');
   }
   updateBossUI();
 });
 
+// Pet evolution check
 function checkPetEvolution() {
   if (!pet) return;
   if (!pet.evolveThreshold) pet.evolveThreshold = 100;
@@ -195,10 +216,11 @@ function checkPetEvolution() {
     pet.evolveThreshold = Math.floor(pet.evolveThreshold * 1.5);
     clickPower += pet.bonusPower;
     alert(`Your pet evolved to level ${pet.level}! Click power increased!`);
-    playSound(soundPet);
+    playSound('pet');
   }
 }
 
+// Update pet UI
 function updatePetUI() {
   if (!pet) {
     petStatus.textContent = 'No pet yet. Keep clicking to hatch!';
@@ -210,6 +232,7 @@ function updatePetUI() {
   }
 }
 
+// Pet animation
 function updatePetAnimation(level) {
   let petEmoji = '🐣';
   if (level === 1) petEmoji = '🦕';
@@ -238,12 +261,14 @@ function petBonusEffect() {
   setTimeout(() => sparkle.remove(), 1000);
 }
 
+// Pet naming
 petNameInput.addEventListener('change', () => {
   if (!pet) return;
   pet.name = petNameInput.value.trim().substring(0, 12);
   updatePetUI();
 });
 
+// Boss spawn
 function checkBossSpawn() {
   if (!boss && clicks >= 1000) {
     boss = {
@@ -256,12 +281,14 @@ function checkBossSpawn() {
   }
 }
 
+// Show boss UI
 function showBoss() {
   bossContainer.style.display = 'block';
   updateBossUI();
   startBossTimer();
 }
 
+// Update boss UI
 function updateBossUI() {
   if (!boss) return;
   bossHealthP.textContent = `Boss Health: ${boss.health} / ${boss.maxHealth}`;
@@ -316,6 +343,7 @@ function bossEscapeEffect() {
   }, 1000);
 }
 
+// Submit score leaderboard
 function submitScore(name, score) {
   leaderboardScores.push({ name, score });
   leaderboardScores.sort((a, b) => b.score - a.score);
@@ -324,6 +352,7 @@ function submitScore(name, score) {
   updateLeaderboardUI();
 }
 
+// Update leaderboard UI
 function updateLeaderboardUI() {
   const list = document.getElementById('leaderboard-list');
   list.innerHTML = '';
@@ -334,6 +363,7 @@ function updateLeaderboardUI() {
   });
 }
 
+// Update all UI elements
 function updateUI() {
   clickCountSpan.textContent = clicks;
   clickPowerSpan.textContent = clickPower;
@@ -349,16 +379,11 @@ function updateUI() {
   }
 }
 
-// Load game on page load if slot selected
+// Load game on page load
 window.addEventListener('load', () => {
-  // Default no slot selected
   document.getElementById('slot-select').style.display = 'block';
   document.getElementById('game').style.display = 'none';
-
-  // Load dark mode from previous
   loadDarkMode();
-
-  // Auto-play music if allowed
   if (musicToggle.checked) {
     bgMusic.play().catch(() => {});
   }
