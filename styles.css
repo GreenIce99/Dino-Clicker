@@ -1,112 +1,61 @@
-* {
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  user-select: none;
-}
 body {
-  margin: 0; padding: 0; background: #e2f7d4; color: #2e7d32;
-  display: flex; flex-direction: column; min-height: 100vh;
-}
-header {
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-#logo svg {
-  flex-shrink: 0;
-}
-main {
-  flex-grow: 1;
-  padding: 1rem;
-  max-width: 600px;
-  margin: 0 auto;
-}
-#click-area {
+  font-family: sans-serif;
+  background-color: #e2f7d4;
+  color: #2e7d32;
   text-align: center;
-  margin-bottom: 2rem;
-}
-#dino-button {
-  font-size: 2rem;
-  padding: 1rem 2rem;
-  cursor: pointer;
-  border: none;
-  border-radius: 10px;
-  background-color: #81c784;
-  color: white;
-  box-shadow: 0 4px #4caf50;
-  transition: background-color 0.2s ease;
-}
-#dino-button:active {
-  box-shadow: none;
-  transform: translateY(4px);
-  background-color: #66bb6a;
-}
-#upgrades {
-  background: #a5d6a7;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-bottom: 2rem;
-}
-.upgrade {
-  background: #c8e6c9;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.upgrade button {
-  background: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  padding: 0.3rem 0.7rem;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-.upgrade button:disabled {
-  background: #9e9e9e;
-  cursor: not-allowed;
-}
-.upgrade button:hover:not(:disabled) {
-  background-color: #388e3c;
-}
-#leaderboard {
-  background: #a5d6a7;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-bottom: 2rem;
-}
-#leaderboard-list {
   margin: 0;
-  padding-left: 1.2rem;
-}
-#save-controls {
-  text-align: center;
-}
-#reset-game {
-  background-color: #e53935;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  padding: 0.7rem 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-#reset-game:hover {
-  background-color: #b71c1c;
-}
-footer {
-  text-align: center;
   padding: 1rem;
-  background: #4caf50;
-  color: white;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  margin: 0.3rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #81c784;
+  color: #fff;
+}
+
+.dark-mode {
+  background-color: #121212;
+  color: #e2f7d4;
+}
+
+.dark-mode button {
+  background: #388e3c;
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+}
+
+#leaderboard-list {
+  list-style: none;
+  padding: 0;
+  max-width: 300px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+#leaderboard-list li {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #4caf50;
+}
+
+#pet-section p {
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+#boss-container {
+  margin: 1rem 0;
+}
+
+#boss-message {
+  font-weight: bold;
+  color: #d32f2f;
+  margin-top: 0.5rem;
 }
