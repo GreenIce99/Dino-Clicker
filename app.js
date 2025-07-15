@@ -1,150 +1,175 @@
-const clickButton = document.getElementById('dino-button');
-const clickCountSpan = document.getElementById('click-count');
-const clickPowerSpan = document.getElementById('click-power');
-const upgradesList = document.getElementById('upgrades-list');
-const leaderboardList = document.getElementById('leaderboard-list');
-const resetButton = document.getElementById('reset-game');
-
 let clicks = 0;
 let clickPower = 1;
+let pet = null;
+let boss = null;
+let achievements = [];
+let leaderboardScores = [];
 
-const upgradesData = [
-  { id: 'power1', name: 'Stronger Tap', baseCost: 10, powerIncrease: 1, cost: 10, level: 0 },
-  { id: 'auto1', name: 'Auto Clicker', baseCost: 100, powerIncrease: 0, cost: 100, level: 0, autoClicksPerSec: 1 },
-  { id: 'power2', name: 'Mega Tap', baseCost: 500, powerIncrease: 5, cost: 500, level: 0 },
-  { id: 'auto2', name: 'Turbo Auto Clicker', baseCost: 2000, powerIncrease: 0, cost: 2000, level: 0, autoClicksPerSec: 5 },
-];
+const clickBtn = document.getElementById('dino-button');
+const clickCountSpan = document.getElementById('click-count');
+const clickPowerSpan = document.getElementById('click-power');
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+const submitScoreBtn = document.getElementById('submit-score-btn');
+const playerNameInput = document.getElementById('player-name');
 
-let leaderboard = [];
-
-function saveGame() {
-  const saveData = {
-    clicks,
-    clickPower,
-    upgrades: upgradesData,
-    leaderboard,
-  };
-  localStorage.setItem('dinoClickerSave', JSON.stringify(saveData));
-}
-
-function loadGame() {
-  const saveStr = localStorage.getItem('dinoClickerSave');
-  if (!saveStr) return;
-  try {
-    const saveData = JSON.parse(saveStr);
-    clicks = saveData.clicks || 0;
-    clickPower = saveData.clickPower || 1;
-    leaderboard = saveData.leaderboard || [];
-    if (saveData.upgrades && Array.isArray(saveData.upgrades)) {
-      for (const u of upgradesData) {
-        const saved = saveData.upgrades.find(s => s.id === u.id);
-        if (saved) {
-          u.level = saved.level || 0;
-          u.cost = saved.cost || u.baseCost;
-        }
-      }
-    }
-  } catch (e) {
-    console.error('Failed to load save:', e);
+clickBtn.addEventListener('click', () => {
+  clicks += clickPower;
+  if (pet) {
+    pet.progress += clickPower;
+    checkPetEvolution();
   }
-}
+  checkBossSpawn();
+  updateUI();
+});
+
+submitScoreBtn.addEventListener('click', () => {
+  const name = playerNameInput.value.trim();
+  if (!name) {
+    alert('Please enter your name to submit score.');
+    return;
+  }
+  submitScore(name, clicks);
+});
 
 function updateUI() {
-  clickCountSpan.textContent = clicks.toLocaleString();
-  clickPowerSpan.textContent = clickPower.toLocaleString();
-
-  upgradesList.innerHTML = '';
-  for (const upgrade of upgradesData) {
-    const div = document.createElement('div');
-    div.className = 'upgrade';
-
-    const nameSpan = document.createElement('span');
-    nameSpan.textContent = `${upgrade.name} (Level ${upgrade.level}) - Cost: ${upgrade.cost.toLocaleString()}`;
-    div.appendChild(nameSpan);
-
-    const buyBtn = document.createElement('button');
-    buyBtn.textContent = 'Buy';
-    buyBtn.disabled = clicks < upgrade.cost;
-    buyBtn.onclick = () => buyUpgrade(upgrade.id);
-    div.appendChild(buyBtn);
-
-    upgradesList.appendChild(div);
-  }
-
+  clickCountSpan.textContent = clicks;
+  clickPowerSpan.textContent = clickPower;
+  loadDarkMode();
   updateLeaderboardUI();
+  updatePetUI();
+  updateBossUI();
 }
 
-function buyUpgrade(id) {
-  const upgrade = upgradesData.find(u => u.id === id);
-  if (!upgrade) return;
-  if (clicks < upgrade.cost) return;
+// DARK MODE
+darkModeToggle.addEventListener('change', () => {
+  const enabled = darkModeToggle.checked;
+  document.body.classList.toggle('dark-mode', enabled);
+  localStorage.setItem('darkMode', enabled ? '1' : '0');
+});
 
-  clicks -= upgrade.cost;
-  upgrade.level++;
-  upgrade.cost = Math.floor(upgrade.baseCost * Math.pow(1.5, upgrade.level));
+function loadDarkMode() {
+  const enabled = localStorage.getItem('darkMode') === '1';
+  darkModeToggle.checked = enabled;
+  document.body.classList.toggle('dark-mode', enabled);
+}
 
-  if (upgrade.powerIncrease) {
-    clickPower += upgrade.powerIncrease;
+// PETS RELATED
+function checkPetEvolution() {
+  if (!pet) return;
+  if (pet.progress >= pet.evolveThreshold) {
+    pet.level++;
+    pet.progress = 0;
+    pet.evolveThreshold = Math.floor(pet.evolveThreshold * 1.5);
+    clickPower += pet.bonusPower;
+    alert(`Your pet evolved to level ${pet.level}! Click power increased!`);
   }
+}
 
-  saveGame();
-  updateUI();
+function updatePetUI() {
+  const petStatus = document.getElementById('pet-status');
+  const collectBtn = document.getElementById('collect-pet-bonus');
+  if (!pet) {
+    petStatus.textContent = 'No pet yet. Keep clicking to hatch!';
+    collectBtn.disabled = true;
+  } else {
+    petStatus.textContent = `Pet Level: ${pet.level} - Progress: ${pet.progress}/${pet.evolveThreshold}`;
+    collectBtn.disabled = false;
+  }
+}
+
+document.getElementById('collect-pet-bonus').addEventListener('click', () => {
+  if (pet) {
+    clicks += pet.bonusPower * pet.level;
+    alert(`Collected ${pet.bonusPower * pet.level} bonus clicks from your pet!`);
+    updateUI();
+  }
+});
+
+// BOSS RELATED
+function checkBossSpawn() {
+  if (!boss && clicks >= 1000) {
+    boss = {
+      health: 100,
+      maxHealth: 100,
+      timer: 30,
+      active: true
+    };
+    showBoss();
+  }
+}
+
+function showBoss() {
+  const bossContainer = document.getElementById('boss-container');
+  bossContainer.style.display = 'block';
+  updateBossUI();
+  startBossTimer();
+}
+
+const bossHealthP = document.getElementById('boss-health');
+const bossTimerP = document.getElementById('boss-timer');
+const bossMessageP = document.getElementById('boss-message');
+const attackBossBtn = document.getElementById('attack-boss-btn');
+
+attackBossBtn.addEventListener('click', () => {
+  if (!boss || !boss.active) return;
+  boss.health -= clickPower * 5;
+  if (boss.health <= 0) {
+    boss.health = 0;
+    boss.active = false;
+    bossMessageP.textContent = 'You defeated the boss! 🎉 Click power +10!';
+    clickPower += 10;
+    bossContainer.style.display = 'none';
+  }
+  updateBossUI();
+});
+
+function updateBossUI() {
+  if (!boss) return;
+  bossHealthP.textContent = `Boss Health: ${boss.health} / ${boss.maxHealth}`;
+  bossTimerP.textContent = `Time Left: ${boss.timer}s`;
+  if (!boss.active) bossMessageP.textContent = 'Boss defeated!';
+}
+
+let bossInterval;
+
+function startBossTimer() {
+  if (bossInterval) clearInterval(bossInterval);
+  bossInterval = setInterval(() => {
+    if (!boss || !boss.active) {
+      clearInterval(bossInterval);
+      return;
+    }
+    boss.timer--;
+    if (boss.timer <= 0) {
+      boss.active = false;
+      bossMessageP.textContent = 'Boss escaped! Try again later.';
+      document.getElementById('boss-container').style.display = 'none';
+      clearInterval(bossInterval);
+    }
+    updateBossUI();
+  }, 1000);
+}
+
+// LEADERBOARD (local simulation)
+function submitScore(name, score) {
+  leaderboardScores.push({ name, score });
+  leaderboardScores.sort((a, b) => b.score - a.score);
+  leaderboardScores = leaderboardScores.slice(0, 10); // Top 10
+  alert('Score submitted!');
+  updateLeaderboardUI();
 }
 
 function updateLeaderboardUI() {
-  leaderboardList.innerHTML = '';
-  leaderboard.slice(0, 5).forEach((entry, i) => {
+  const list = document.getElementById('leaderboard-list');
+  list.innerHTML = '';
+  leaderboardScores.forEach((entry, idx) => {
     const li = document.createElement('li');
-    li.textContent = `${entry.date}: ${entry.score.toLocaleString()} clicks`;
-    leaderboardList.appendChild(li);
+    li.textContent = `${idx + 1}. ${entry.name} - ${entry.score}`;
+    list.appendChild(li);
   });
 }
 
-function addScoreToLeaderboard(score) {
-  const date = new Date().toLocaleDateString();
-  leaderboard.push({ date, score });
-  leaderboard.sort((a, b) => b.score - a.score);
-  leaderboard = leaderboard.slice(0, 5);
-  saveGame();
-  updateLeaderboardUI();
-}
-
-clickButton.addEventListener('click', () => {
-  clicks += clickPower;
-  updateUI();
-  saveGame();
-});
-
-resetButton.addEventListener('click', () => {
-  if (confirm('Are you sure you want to reset the game? Your progress will be lost.')) {
-    addScoreToLeaderboard(clicks);
-    clicks = 0;
-    clickPower = 1;
-    upgradesData.forEach(u => {
-      u.level = 0;
-      u.cost = u.baseCost;
-    });
-    saveGame();
-    updateUI();
-  }
-});
-
-// Auto clickers logic
-setInterval(() => {
-  let autoClicks = 0;
-  for (const u of upgradesData) {
-    if (u.autoClicksPerSec && u.level > 0) {
-      autoClicks += u.autoClicksPerSec * u.level;
-    }
-  }
-  clicks += autoClicks;
-  if (autoClicks > 0) {
-    updateUI();
-    saveGame();
-  }
-}, 1000);
-
-window.onload = () => {
-  loadGame();
-  updateUI();
-};
+// INITIAL LOAD
+loadGame();
+updateUI();
+loadDarkMode();
