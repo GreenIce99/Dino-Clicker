@@ -12,12 +12,31 @@ const darkModeToggle = document.getElementById('dark-mode-toggle');
 const submitScoreBtn = document.getElementById('submit-score-btn');
 const playerNameInput = document.getElementById('player-name');
 
+const bossContainer = document.getElementById('boss-container');
+const bossHealthP = document.getElementById('boss-health');
+const bossTimerP = document.getElementById('boss-timer');
+const bossMessageP = document.getElementById('boss-message');
+const attackBossBtn = document.getElementById('attack-boss-btn');
+
+// pets.js functions used
+// updatePetAnimation(level), petBonusEffect()
+
+// boss.js functions used
+// bossHitAnimation(), bossTimerAnimation(timeLeft), bossEscapeEffect()
+
 clickBtn.addEventListener('click', () => {
   clicks += clickPower;
+
   if (pet) {
     pet.progress += clickPower;
     checkPetEvolution();
+    updatePetAnimation(pet.level);    // Animate pet wobble & emoji
   }
+
+  if (boss && boss.active) {
+    bossHitAnimation();               // Flash boss container red on hit
+  }
+
   checkBossSpawn();
   updateUI();
 });
@@ -29,6 +48,29 @@ submitScoreBtn.addEventListener('click', () => {
     return;
   }
   submitScore(name, clicks);
+});
+
+document.getElementById('collect-pet-bonus').addEventListener('click', () => {
+  if (pet) {
+    clicks += pet.bonusPower * pet.level;
+    petBonusEffect();                 // Show sparkle animation
+    alert(`Collected ${pet.bonusPower * pet.level} bonus clicks from your pet!`);
+    updateUI();
+  }
+});
+
+attackBossBtn.addEventListener('click', () => {
+  if (!boss || !boss.active) return;
+  boss.health -= clickPower * 5;
+  bossHitAnimation();                 // Flash red effect on hit
+  if (boss.health <= 0) {
+    boss.health = 0;
+    boss.active = false;
+    bossMessageP.textContent = 'You defeated the boss! 🎉 Click power +10!';
+    clickPower += 10;
+    bossContainer.style.display = 'none';
+  }
+  updateBossUI();
 });
 
 function updateUI() {
@@ -77,14 +119,6 @@ function updatePetUI() {
   }
 }
 
-document.getElementById('collect-pet-bonus').addEventListener('click', () => {
-  if (pet) {
-    clicks += pet.bonusPower * pet.level;
-    alert(`Collected ${pet.bonusPower * pet.level} bonus clicks from your pet!`);
-    updateUI();
-  }
-});
-
 // BOSS RELATED
 function checkBossSpawn() {
   if (!boss && clicks >= 1000) {
@@ -99,34 +133,16 @@ function checkBossSpawn() {
 }
 
 function showBoss() {
-  const bossContainer = document.getElementById('boss-container');
   bossContainer.style.display = 'block';
   updateBossUI();
   startBossTimer();
 }
 
-const bossHealthP = document.getElementById('boss-health');
-const bossTimerP = document.getElementById('boss-timer');
-const bossMessageP = document.getElementById('boss-message');
-const attackBossBtn = document.getElementById('attack-boss-btn');
-
-attackBossBtn.addEventListener('click', () => {
-  if (!boss || !boss.active) return;
-  boss.health -= clickPower * 5;
-  if (boss.health <= 0) {
-    boss.health = 0;
-    boss.active = false;
-    bossMessageP.textContent = 'You defeated the boss! 🎉 Click power +10!';
-    clickPower += 10;
-    bossContainer.style.display = 'none';
-  }
-  updateBossUI();
-});
-
 function updateBossUI() {
   if (!boss) return;
   bossHealthP.textContent = `Boss Health: ${boss.health} / ${boss.maxHealth}`;
   bossTimerP.textContent = `Time Left: ${boss.timer}s`;
+  bossTimerAnimation(boss.timer);    // Animate timer flashing when low
   if (!boss.active) bossMessageP.textContent = 'Boss defeated!';
 }
 
@@ -143,7 +159,7 @@ function startBossTimer() {
     if (boss.timer <= 0) {
       boss.active = false;
       bossMessageP.textContent = 'Boss escaped! Try again later.';
-      document.getElementById('boss-container').style.display = 'none';
+      bossEscapeEffect();             // Fade out boss container on escape
       clearInterval(bossInterval);
     }
     updateBossUI();
