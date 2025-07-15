@@ -3,8 +3,8 @@
   "short_name": "DinoClicker",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#4caf50",
-  "theme_color": "#4caf50",
+  "background_color": "#e2f7d4",
+  "theme_color": "#2e7d32",
   "icons": [
     {
       "src": "icon-192.png",
